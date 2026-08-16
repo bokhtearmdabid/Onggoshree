@@ -3,9 +3,14 @@
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
+    "@expo-google-fonts/fraunces": "^0.4.1",
+    "@expo-google-fonts/hind-siliguri": "^0.4.1",
+    "@expo-google-fonts/noto-serif-bengali": "^0.4.4",
+    "@expo-google-fonts/plus-jakarta-sans": "^0.4.2",
     "axios": "^1.19.0",
     "expo": "~57.0.9",
     "expo-dev-client": "~57.0.10",
+    "expo-font": "~57.0.1",
     "expo-status-bar": "~57.0.1",
     "react": "19.2.3",
     "react-native": "0.86.2"
