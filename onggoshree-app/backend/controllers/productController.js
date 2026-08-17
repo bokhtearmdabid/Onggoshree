@@ -3,7 +3,9 @@ const Product = require("../models/Product");
 // GET /api/products
 const getProducts = async (req, res) => {
   try {
-    const products = await Product.find().sort({ createdAt: -1 });
+    const { category } = req.query;
+    const filter = category && category !== "All" ? { category } : {};
+    const products = await Product.find(filter).sort({ createdAt: -1 });
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch products", error: error.message });

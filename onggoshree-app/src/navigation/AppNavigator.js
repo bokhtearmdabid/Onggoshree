@@ -7,6 +7,7 @@ import ShopScreen from "../screens/ShopScreen";
 import SkinAIScreen from "../screens/SkinAIScreen";
 import ClubScreen from "../screens/ClubScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import ShopStack from "./ShopStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -18,7 +19,7 @@ export default function AppNavigator() {
         tabBar={(props) => <TabBar {...props} />}
       >
         <Tab.Screen name="Home" component={HomeStack} />
-        <Tab.Screen name="Shop" component={ShopScreen} />
+        <Tab.Screen name="Shop" component={ShopStack} />
         <Tab.Screen name="SkinAI" component={SkinAIScreen} />
         <Tab.Screen name="Club" component={ClubScreen} />
         <Tab.Screen name="Profile" component={ProfileScreen} />
