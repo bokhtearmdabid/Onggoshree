@@ -1,16 +1,161 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { colors, fonts } from "../constants/theme";
 
+// Just a place holder data man!
+const placeholderUser = {
+  name: "Anaya Rahman",
+  email: "anaya.r@gmail.com",
+  tier: "Radiant member",
+  orders: 12,
+  points: 1240,
+  saved: 8,
+};
+
+const MENU_ITEMS = [
+  { label: "My orders", icon: "📦", badge: "1 active" },
+  { label: "Addresses", icon: "📍" },
+  { label: "Skin history", icon: "🔎" },
+  { label: "Wishlist", icon: "♡" },
+  { label: "Help & support", icon: "❓" },
+  { label: "Settings", icon: "⚙" },
+];
+
 export default function ProfileScreen() {
+  const user = placeholderUser;
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Profile — coming soon</Text>
-    </View>
+    <SafeAreaView style={styles.safeArea} edges={["top"]}>
+      <ScrollView>
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.avatar}>
+            <Text style={styles.avatarText}>{user.name.charAt(0)}</Text>
+          </View>
+          <View>
+            <Text style={styles.name}>{user.name}</Text>
+            <Text style={styles.email}>{user.email}</Text>
+            <View style={styles.tierPill}>
+              <Text style={styles.tierText}>✦ {user.tier}</Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.body}>
+          {/* Stats */}
+          <View style={styles.stats}>
+            <View style={styles.stat}>
+              <Text style={styles.statNum}>{user.orders}</Text>
+              <Text style={styles.statLabel}>ORDERS</Text>
+            </View>
+            <View style={styles.stat}>
+              <Text style={styles.statNum}>{user.points.toLocaleString()}</Text>
+              <Text style={styles.statLabel}>POINTS</Text>
+            </View>
+            <View style={styles.stat}>
+              <Text style={styles.statNum}>{user.saved}</Text>
+              <Text style={styles.statLabel}>SAVED</Text>
+            </View>
+          </View>
+
+          {/* Menu */}
+          <View style={styles.menu}>
+            {MENU_ITEMS.map((item) => (
+              <TouchableOpacity key={item.label} style={styles.mrow} activeOpacity={0.6}>
+                <View style={styles.mi}>
+                  <Text style={styles.miIcon}>{item.icon}</Text>
+                </View>
+                <Text style={styles.ml}>{item.label}</Text>
+                {item.badge ? (
+                  <View style={styles.mbadge}>
+                    <Text style={styles.mbadgeText}>{item.badge}</Text>
+                  </View>
+                ) : (
+                  <Text style={styles.mc}>›</Text>
+                )}
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.canvas, justifyContent: "center", alignItems: "center" },
-  text: { fontFamily: fonts.serif, fontSize: 18, color: colors.forest },
+  safeArea: { flex: 1, backgroundColor: colors.canvas },
+  header: {
+    backgroundColor: colors.forest,
+    paddingHorizontal: 20,
+    paddingVertical: 26,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 15,
+  },
+  avatar: {
+    width: 64,
+    height: 64,
+    borderRadius: 20,
+    backgroundColor: colors.glow,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  avatarText: { fontFamily: fonts.serif, fontSize: 26, color: colors.forest, fontWeight: "700" },
+  name: { fontFamily: fonts.serif, fontSize: 20, color: "#fff" },
+  email: { fontFamily: fonts.sans, fontSize: 12, color: "rgba(255,255,255,0.72)", marginTop: 2 },
+  tierPill: {
+    marginTop: 8,
+    alignSelf: "flex-start",
+    backgroundColor: "rgba(231,179,107,0.18)",
+    borderRadius: 20,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+  },
+  tierText: { fontFamily: fonts.sansBold, fontSize: 10, color: colors.glow, letterSpacing: 0.5 },
+
+  body: { padding: 18 },
+  stats: { flexDirection: "row", gap: 10, marginBottom: 8 },
+  stat: {
+    flex: 1,
+    backgroundColor: colors.milk,
+    borderWidth: 1,
+    borderColor: colors.line,
+    borderRadius: 16,
+    paddingVertical: 13,
+    alignItems: "center",
+  },
+  statNum: { fontFamily: fonts.serif, fontSize: 18, color: colors.forest },
+  statLabel: { fontFamily: fonts.sansBold, fontSize: 9, color: colors.muted, letterSpacing: 0.8, marginTop: 3 },
+
+  menu: { marginTop: 8 },
+  mrow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 14,
+    paddingVertical: 14,
+    paddingHorizontal: 4,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.line,
+  },
+  mi: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    backgroundColor: colors.milk,
+    borderWidth: 1,
+    borderColor: colors.line,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  miIcon: { fontSize: 15, color: colors.leaf },
+  ml: { flex: 1, fontFamily: fonts.sans, fontSize: 13.5, fontWeight: "600", color: colors.forest },
+  mc: { color: colors.muted, fontSize: 18 },
+  mbadge: {
+    backgroundColor: colors.glow,
+    borderRadius: 20,
+    paddingVertical: 3,
+    paddingHorizontal: 9,
+  },
+  mbadgeText: { fontFamily: fonts.sansBold, fontSize: 10, color: "#40300f" },
 });

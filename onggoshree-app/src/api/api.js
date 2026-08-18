@@ -13,4 +13,6 @@ export const getProducts = (category) =>
   api.get("/products", { params: category && category !== "All" ? { category } : {} });
 export const getProductById = (id) => api.get(`/products/${id}`);
 
+export const createOrder = (orderData) => api.post("/orders", orderData);
+
 export default api;

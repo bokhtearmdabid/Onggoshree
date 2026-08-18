@@ -6,10 +6,11 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
-  SafeAreaView,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { getProducts } from "../api/api";
 import { colors, fonts } from "../constants/theme";
+import { useCart } from "../context/CartContext";
 
 const CATEGORIES = ["All", "Facial", "Serum", "Gel", "Bar", "Hair"];
 
@@ -18,6 +19,7 @@ export default function ShopScreen({ navigation }) {
   const [activeCategory, setActiveCategory] = useState("All");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { totalItems } = useCart();
 
   const fetchProducts = useCallback((category) => {
     setLoading(true);
@@ -39,6 +41,14 @@ export default function ShopScreen({ navigation }) {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.topTitle}>
         <Text style={styles.title}>Shop all</Text>
+        <TouchableOpacity style={styles.cartBtn} onPress={() => navigation.navigate("Cart")}>
+          <Text style={styles.cartIcon}>🛒</Text>
+          {totalItems > 0 && (
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>{totalItems}</Text>
+            </View>
+          )}
+        </TouchableOpacity>
       </View>
 
       <View style={styles.search}>
@@ -197,4 +207,29 @@ const styles = StyleSheet.create({
   center: { paddingVertical: 60, alignItems: "center" },
   errorText: { fontFamily: fonts.sans, color: "#c0392b", textAlign: "center", paddingHorizontal: 30 },
   emptyText: { fontFamily: fonts.sans, color: colors.muted, paddingHorizontal: 18 },
+  cartBtn: {
+  width: 38,
+  height: 38,
+  borderRadius: 19,
+  backgroundColor: colors.milk,
+  borderWidth: 1,
+  borderColor: colors.line,
+  justifyContent: "center",
+  alignItems: "center",
+},
+cartIcon: { fontSize: 16 },
+badge: {
+  position: "absolute",
+  top: -2,
+  right: -2,
+  width: 16,
+  height: 16,
+  borderRadius: 8,
+  backgroundColor: colors.glow,
+  borderWidth: 2,
+  borderColor: colors.canvas,
+  justifyContent: "center",
+  alignItems: "center",
+},
+badgeText: { fontSize: 9, fontWeight: "800", color: "#40300f" },
 });

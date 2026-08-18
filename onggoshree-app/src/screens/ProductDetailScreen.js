@@ -9,12 +9,14 @@ import {
 } from "react-native";
 import { getProductById } from "../api/api";
 import { colors, fonts } from "../constants/theme";
+import { useCart } from "../context/CartContext";
 
 export default function ProductDetailScreen({ route, navigation }) {
   const { productId } = route.params;
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [qty, setQty] = useState(1);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     getProductById(productId)
@@ -88,10 +90,16 @@ export default function ProductDetailScreen({ route, navigation }) {
             <Text style={styles.qtyBtn}>+</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.addBtn}>
-          <Text style={styles.addBtnText}>
+        <TouchableOpacity
+        style={styles.addBtn}
+        onPress={() => {
+            addToCart(product, qty);
+            navigation.navigate("Cart");
+        }}
+        >
+        <Text style={styles.addBtnText}>
             Add to bag · <Text style={styles.addBtnPrice}>৳{(product.price * qty).toFixed(0)}</Text>
-          </Text>
+        </Text>
         </TouchableOpacity>
       </View>
     </View>

@@ -14,6 +14,7 @@ import {
 import { NotoSerifBengali_600SemiBold } from "@expo-google-fonts/noto-serif-bengali";
 import { HindSiliguri_500Medium } from "@expo-google-fonts/hind-siliguri";
 import AppNavigator from "./src/navigation/AppNavigator";
+import { CartProvider } from "./src/context/CartContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -39,9 +40,11 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-    <View style={{ flex: 1 }} onLayout={onLayout}>
-      <AppNavigator />
-    </View>
+      <View style={{ flex: 1 }} onLayout={onLayout}>
+        <CartProvider>
+          <AppNavigator />
+        </CartProvider>
+      </View>
     </SafeAreaProvider>
   );
 }
