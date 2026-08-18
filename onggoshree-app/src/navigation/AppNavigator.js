@@ -1,11 +1,10 @@
 import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import TabBar from "./TabBar";
 import HomeStack from "./HomeStack";
 import ShopStack from "./ShopStack";
-import SkinAIScreen from "../screens/SkinAIScreen";
+import SkinAIStack from "./SkinAIStack";
 import ClubScreen from "../screens/ClubScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import CartScreen from "../screens/CartScreen";
@@ -23,7 +22,7 @@ function Tabs() {
     >
       <Tab.Screen name="Home" component={HomeStack} />
       <Tab.Screen name="Shop" component={ShopStack} />
-      <Tab.Screen name="SkinAI" component={SkinAIScreen} />
+      <Tab.Screen name="SkinAI" component={SkinAIStack} />
       <Tab.Screen name="Club" component={ClubScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
@@ -32,7 +31,6 @@ function Tabs() {
 
 export default function AppNavigator() {
   return (
-    <NavigationContainer>
       <RootStack.Navigator screenOptions={{ headerShown: false }}>
         <RootStack.Screen name="Tabs" component={Tabs} />
         <RootStack.Screen
@@ -47,6 +45,5 @@ export default function AppNavigator() {
         name="OrderConfirmation" 
         component={OrderConfirmationScreen} />
       </RootStack.Navigator>
-    </NavigationContainer>
   );
 }

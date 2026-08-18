@@ -1,5 +1,6 @@
 import axios from "axios";
 import { API_URL } from "../constants/config";
+import * as SecureStore from "expo-secure-store";
 
 const api = axios.create({
   baseURL: API_URL,
@@ -9,14 +10,29 @@ const api = axios.create({
   },
 });
 
+// Automatically attach the stored token to every outgoing request, if one exists.
+// এর অর্থ হলো, প্রতিটি আলাদা স্ক্রিনের জন্য এটি ম্যানুয়ালি pass করার কথা মনে রাখার প্রয়োজন নেই।
+api.interceptors.request.use(async (config) => {
+  const token = await SecureStore.getItemAsync("authToken");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 export const getProducts = (category, search) => {
   const params = {};
   if (category && category !== "All") params.category = category;
   if (search) params.search = search;
   return api.get("/products", { params });
 };
+
 export const getProductById = (id) => api.get(`/products/${id}`);
 
 export const createOrder = (orderData) => api.post("/orders", orderData);
+
+export const registerUser = (data) => api.post("/auth/register", data);
+export const loginUser = (data) => api.post("/auth/login", data);
+export const getMe = () => api.get("/auth/me");
 
 export default api;
