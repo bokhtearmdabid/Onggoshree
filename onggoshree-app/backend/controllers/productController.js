@@ -3,8 +3,16 @@ const Product = require("../models/Product");
 // GET /api/products
 const getProducts = async (req, res) => {
   try {
-    const { category } = req.query;
-    const filter = category && category !== "All" ? { category } : {};
+    const { category, search } = req.query;
+    const filter = {};
+
+    if (category && category !== "All") {
+      filter.category = category;
+    }
+    if (search) {
+      filter.name = { $regex: search, $options: "i" };
+    }
+
     const products = await Product.find(filter).sort({ createdAt: -1 });
     res.json(products);
   } catch (error) {

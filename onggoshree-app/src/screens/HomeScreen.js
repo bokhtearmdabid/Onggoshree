@@ -10,6 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { getProducts } from "../api/api";
 import ProductCard from "../components/ProductCard";
 import { colors, fonts } from "../constants/theme";
+import { TouchableOpacity } from "react-native";
 
 export default function HomeScreen({ navigation }) {
   const [products, setProducts] = useState([]);
@@ -41,9 +42,12 @@ export default function HomeScreen({ navigation }) {
       </View>
 
       {/* Search bar */}
-      <View style={styles.search}>
+      <TouchableOpacity
+        style={styles.search}
+        onPress={() => navigation.navigate("Shop", { screen: "ShopMain" })}
+      >
         <Text style={styles.searchText}>Search products...</Text>
-      </View>
+      </TouchableOpacity>
 
       {/* Section header */}
       <View style={styles.sectionHeader}>

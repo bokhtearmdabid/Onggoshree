@@ -9,8 +9,12 @@ const api = axios.create({
   },
 });
 
-export const getProducts = (category) =>
-  api.get("/products", { params: category && category !== "All" ? { category } : {} });
+export const getProducts = (category, search) => {
+  const params = {};
+  if (category && category !== "All") params.category = category;
+  if (search) params.search = search;
+  return api.get("/products", { params });
+};
 export const getProductById = (id) => api.get(`/products/${id}`);
 
 export const createOrder = (orderData) => api.post("/orders", orderData);

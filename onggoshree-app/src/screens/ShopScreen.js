@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
+  TextInput,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getProducts } from "../api/api";
@@ -21,11 +22,12 @@ export default function ShopScreen({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { totalItems } = useCart();
+  const [searchText, setSearchText] = useState("");
 
-  const fetchProducts = useCallback((category) => {
+  const fetchProducts = useCallback((category, search) => {
     setLoading(true);
     setError(null);
-    getProducts(category)
+    getProducts(category, search)
       .then((res) => setProducts(res.data))
       .catch((err) => {
         console.log("Error fetching products:", err.message);
@@ -35,8 +37,11 @@ export default function ShopScreen({ navigation }) {
   }, []);
 
   useEffect(() => {
-    fetchProducts(activeCategory);
-  }, [activeCategory]);
+    const delay = setTimeout(() => {
+      fetchProducts(activeCategory, searchText);
+    }, 400);
+    return () => clearTimeout(delay); // This cancel the pending call if the user keeps typing
+  }, [activeCategory, searchText]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -53,7 +58,13 @@ export default function ShopScreen({ navigation }) {
       </View>
 
       <View style={styles.search}>
-        <Text style={styles.searchText}>Search {products.length} products</Text>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search products..."
+          placeholderTextColor={colors.muted}
+          value={searchText}
+          onChangeText={setSearchText}
+        />
       </View>
 
       <View style={styles.chipsWrap}>
@@ -154,6 +165,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.milk,
     borderWidth: 1,
     borderColor: colors.line,
+  },
+
+  searchInput: {
+  fontFamily: fonts.sans,
+  fontSize: 13.5,
+  color: colors.forest,
+  padding: 0,
   },
   chipOn: { backgroundColor: colors.forest, borderColor: "transparent" },
   chipText: { fontFamily: fonts.sansBold, fontSize: 12.5, color: colors.forest },
