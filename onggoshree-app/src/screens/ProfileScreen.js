@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { colors, fonts } from "../constants/theme";
+import { Feather } from "@expo/vector-icons";
 
 // Just a place holder data man!
 const placeholderUser = {
@@ -14,12 +15,12 @@ const placeholderUser = {
 };
 
 const MENU_ITEMS = [
-  { label: "My orders", icon: "📦", badge: "1 active" },
-  { label: "Addresses", icon: "📍" },
-  { label: "Skin history", icon: "🔎" },
-  { label: "Wishlist", icon: "♡" },
-  { label: "Help & support", icon: "❓" },
-  { label: "Settings", icon: "⚙" },
+  { label: "My orders", icon: "package", badge: "1 active" },
+  { label: "Addresses", icon: "map-pin" },
+  { label: "Skin history", icon: "search" },
+  { label: "Wishlist", icon: "heart" },
+  { label: "Help & support", icon: "help-circle" },
+  { label: "Settings", icon: "settings" },
 ];
 
 export default function ProfileScreen() {
@@ -64,7 +65,7 @@ export default function ProfileScreen() {
             {MENU_ITEMS.map((item) => (
               <TouchableOpacity key={item.label} style={styles.mrow} activeOpacity={0.6}>
                 <View style={styles.mi}>
-                  <Text style={styles.miIcon}>{item.icon}</Text>
+                  <Feather name={item.icon} size={16} color={colors.leaf} />
                 </View>
                 <Text style={styles.ml}>{item.label}</Text>
                 {item.badge ? (

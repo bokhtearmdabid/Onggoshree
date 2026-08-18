@@ -9,6 +9,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useCart } from "../context/CartContext";
 import { colors, fonts } from "../constants/theme";
+import { Feather } from "@expo/vector-icons";
 
 const DELIVERY_FEE = 60;
 
@@ -21,9 +22,9 @@ export default function CartScreen({ navigation }) {
     return (
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.topTitle}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={styles.closeIcon}>✕</Text>
-          </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Feather name="x" size={20} color={colors.forest} />
+            </TouchableOpacity>
           <Text style={styles.title}>Your bag</Text>
           <View style={{ width: 24 }} />
         </View>

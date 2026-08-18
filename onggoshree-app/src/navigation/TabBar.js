@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { colors, fonts } from "../constants/theme";
+import { Feather } from "@expo/vector-icons";
 
 const TAB_LABELS = {
   Home: "Home",
@@ -8,6 +9,13 @@ const TAB_LABELS = {
   SkinAI: "Skin AI",
   Club: "Club",
   Profile: "Profile",
+};
+
+const TAB_ICONS = {
+  Home: "home",
+  Shop: "shopping-bag",
+  Club: "award",
+  Profile: "user",
 };
 
 export default function TabBar({ state, navigation }) {
@@ -32,21 +40,25 @@ export default function TabBar({ state, navigation }) {
           return (
             <TouchableOpacity key={route.key} onPress={onPress} style={styles.fabWrap}>
               <View style={styles.fab}>
-                <Text style={styles.fabIcon}>◎</Text>
+                <Feather name="camera" size={22} color="#fff" />
               </View>
               <Text style={styles.fabLabel}>{TAB_LABELS[route.name]}</Text>
             </TouchableOpacity>
           );
         }
 
-        return (
-          <TouchableOpacity key={route.key} onPress={onPress} style={styles.tab}>
-            <Text style={[styles.tabIcon, isFocused && styles.tabIconOn]}>●</Text>
-            <Text style={[styles.tabLabel, isFocused && styles.tabLabelOn]}>
-              {TAB_LABELS[route.name]}
-            </Text>
-          </TouchableOpacity>
-        );
+          return (
+            <TouchableOpacity key={route.key} onPress={onPress} style={styles.tab}>
+              <Feather
+                name={TAB_ICONS[route.name]}
+                size={20}
+                color={isFocused ? colors.leaf : colors.muted}
+              />
+              <Text style={[styles.tabLabel, isFocused && styles.tabLabelOn]}>
+                {TAB_LABELS[route.name]}
+              </Text>
+            </TouchableOpacity>
+          );
       })}
     </View>
   );

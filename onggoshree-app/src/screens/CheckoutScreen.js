@@ -13,6 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useCart } from "../context/CartContext";
 import { createOrder } from "../api/api";
 import { colors, fonts } from "../constants/theme";
+import { Feather } from "@expo/vector-icons";
 
 const DELIVERY_FEE = 60;
 
@@ -59,7 +60,7 @@ export default function CheckoutScreen({ navigation }) {
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         <View style={styles.topTitle}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={styles.backIcon}>←</Text>
+            <Feather name="arrow-left" size={18} color={colors.forest} />
           </TouchableOpacity>
           <Text style={styles.title}>Delivery details</Text>
           <View style={{ width: 24 }} />

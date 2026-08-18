@@ -10,6 +10,7 @@ import {
 import { getProductById } from "../api/api";
 import { colors, fonts } from "../constants/theme";
 import { useCart } from "../context/CartContext";
+import { Feather } from "@expo/vector-icons";
 
 export default function ProductDetailScreen({ route, navigation }) {
   const { productId } = route.params;
@@ -50,10 +51,10 @@ export default function ProductDetailScreen({ route, navigation }) {
         <View style={styles.hero}>
           <View style={styles.heroTop}>
             <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.goBack()}>
-              <Text style={styles.iconBtnText}>←</Text>
+              <Feather name="arrow-left" size={18} color={colors.forest} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.iconBtn}>
-              <Text style={styles.iconBtnText}>♡</Text>
+              <Feather name="heart" size={18} color={colors.forest} />
             </TouchableOpacity>
           </View>
           <Text style={styles.heroLetter}>{product.name.charAt(0).toUpperCase()}</Text>

@@ -11,6 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { getProducts } from "../api/api";
 import { colors, fonts } from "../constants/theme";
 import { useCart } from "../context/CartContext";
+import { Feather } from "@expo/vector-icons";
 
 const CATEGORIES = ["All", "Facial", "Serum", "Gel", "Bar", "Hair"];
 
@@ -42,7 +43,7 @@ export default function ShopScreen({ navigation }) {
       <View style={styles.topTitle}>
         <Text style={styles.title}>Shop all</Text>
         <TouchableOpacity style={styles.cartBtn} onPress={() => navigation.navigate("Cart")}>
-          <Text style={styles.cartIcon}>🛒</Text>
+          <Feather name="shopping-bag" size={16} color={colors.forest} />
           {totalItems > 0 && (
             <View style={styles.badge}>
               <Text style={styles.badgeText}>{totalItems}</Text>
