@@ -10,6 +10,7 @@ import ProfileScreen from "../screens/ProfileScreen";
 import CartScreen from "../screens/CartScreen";
 import CheckoutScreen from "../screens/CheckoutScreen";
 import OrderConfirmationScreen from "../screens/OrderConfirmationScreen";
+import ProfileStack from "./ProfileStack";
 
 const Tab = createBottomTabNavigator();
 const RootStack = createNativeStackNavigator();
@@ -24,7 +25,7 @@ function Tabs() {
       <Tab.Screen name="Shop" component={ShopStack} />
       <Tab.Screen name="SkinAI" component={SkinAIStack} />
       <Tab.Screen name="Club" component={ClubScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Profile" component={ProfileStack} />
     </Tab.Navigator>
   );
 }

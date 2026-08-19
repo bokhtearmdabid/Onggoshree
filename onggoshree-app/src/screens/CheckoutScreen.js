@@ -14,6 +14,7 @@ import { useCart } from "../context/CartContext";
 import { createOrder } from "../api/api";
 import { colors, fonts } from "../constants/theme";
 import { Feather } from "@expo/vector-icons";
+import { useAuth } from "../context/AuthContext";
 
 const DELIVERY_FEE = 60;
 
@@ -23,6 +24,7 @@ export default function CheckoutScreen({ navigation }) {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const { refreshUser } = useAuth();
 
   const total = subtotal + DELIVERY_FEE;
 
@@ -41,11 +43,12 @@ export default function CheckoutScreen({ navigation }) {
         address: address.trim(),
       };
 
-      const response = await createOrder(orderPayload);
-      const order = response.data;
+        const response = await createOrder(orderPayload);
+        const order = response.data;
 
-      clearCart();
-      navigation.replace("OrderConfirmation", { order });
+        clearCart();
+        await refreshUser(); // pick up the newly earned Glow points
+        navigation.replace("OrderConfirmation", { order });
     } catch (error) {
       console.log("Order failed:", error.message);
       const serverMessage = error.response?.data?.message;

@@ -1,6 +1,6 @@
-// (User isn't directly needed here — req.user comes from the auth middleware — but Product already is)
 const Order = require("../models/Order");
 const Product = require("../models/Product");
+const User = require("../models/User");
 
 // POST /api/orders
 const createOrder = async (req, res) => {
@@ -11,8 +11,6 @@ const createOrder = async (req, res) => {
       return res.status(400).json({ message: "Cannot place an order with no items" });
     }
 
-    // Re-fetch each product from the DB to confirm real prices and stock —
-    // never trust prices sent directly from the client, they could be tampered with.
     const orderItems = [];
     let subtotal = 0;
 
@@ -33,7 +31,6 @@ const createOrder = async (req, res) => {
       });
       subtotal += product.price * item.qty;
 
-      // Reduce stock now that we've confirmed the order is valid
       product.stock -= item.qty;
       await product.save();
     }
@@ -52,18 +49,13 @@ const createOrder = async (req, res) => {
       address,
     });
 
-    // GET /api/orders/mine  (protected)
-    const getMyOrders = async (req, res) => {
-      try {
-        const orders = await Order.find({ user: req.user._id }).sort({ createdAt: -1 });
-        res.json(orders);
-      } catch (error) {
-        res.status(500).json({ message: "Failed to fetch orders", error: error.message });
-      }
-    };    
+    // Earn 1 Glow point per ৳10 spent (subtotal only — delivery fee doesn't earn points)
+    const pointsEarned = Math.floor(subtotal / 10);
+    await User.findByIdAndUpdate(req.user._id, { $inc: { points: pointsEarned } });
 
-    res.status(201).json(order);
+    res.status(201).json({ ...order.toObject(), pointsEarned });
   } catch (error) {
+    console.error("CREATE ORDER ERROR:", error); // temporary — remove once debugged
     res.status(400).json({ message: "Failed to create order", error: error.message });
   }
 };
@@ -81,6 +73,7 @@ const getOrderById = async (req, res) => {
   }
 };
 
+// GET /api/orders/mine  (protected)
 const getMyOrders = async (req, res) => {
   try {
     const orders = await Order.find({ user: req.user._id }).sort({ createdAt: -1 });

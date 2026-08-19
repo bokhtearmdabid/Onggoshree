@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useEffect, useState }  from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { colors, fonts } from "../constants/theme";
 import { Feather } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
+import { getMyOrders } from "../api/api";
 
 
 const MENU_ITEMS = [
-  { label: "My orders", icon: "package", badge: "1 active" },
+  { label: "My orders", icon: "package" },
   { label: "Addresses", icon: "map-pin" },
   { label: "Skin history", icon: "search" },
   { label: "Wishlist", icon: "heart" },
@@ -15,8 +16,15 @@ const MENU_ITEMS = [
   { label: "Settings", icon: "settings" },
 ];
 
-export default function ProfileScreen() {
+export default function ProfileScreen({ navigation }) {
   const { user, logout } = useAuth();
+  const [orderCount, setOrderCount] = useState(0);
+
+useEffect(() => {
+  getMyOrders()
+    .then((res) => setOrderCount(res.data.length))
+    .catch((err) => console.log("Error fetching order count:", err.message));
+}, []);
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <ScrollView>
@@ -35,7 +43,7 @@ export default function ProfileScreen() {
           {/* Stats */}
           <View style={styles.stats}>
             <View style={styles.stat}>
-              <Text style={styles.statNum}>0</Text>
+              <Text style={styles.statNum}>{orderCount}</Text>
               <Text style={styles.statLabel}>ORDERS</Text>
             </View>
             <View style={styles.stat}>
@@ -51,7 +59,14 @@ export default function ProfileScreen() {
           {/* Menu */}
           <View style={styles.menu}>
             {MENU_ITEMS.map((item) => (
-              <TouchableOpacity key={item.label} style={styles.mrow} activeOpacity={0.6}>
+                <TouchableOpacity
+                  key={item.label}
+                  style={styles.mrow}
+                  activeOpacity={0.6}
+                  onPress={() => {
+                    if (item.label === "My orders") navigation.navigate("Orders");
+                  }}
+                >
                 <View style={styles.mi}>
                   <Feather name={item.icon} size={16} color={colors.leaf} />
                 </View>
