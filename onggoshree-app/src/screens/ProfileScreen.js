@@ -3,16 +3,8 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-nati
 import { SafeAreaView } from "react-native-safe-area-context";
 import { colors, fonts } from "../constants/theme";
 import { Feather } from "@expo/vector-icons";
+import { useAuth } from "../context/AuthContext";
 
-// Just a place holder data man!
-const placeholderUser = {
-  name: "Anaya Rahman",
-  email: "anaya.r@gmail.com",
-  tier: "Radiant member",
-  orders: 12,
-  points: 1240,
-  saved: 8,
-};
 
 const MENU_ITEMS = [
   { label: "My orders", icon: "package", badge: "1 active" },
@@ -24,8 +16,7 @@ const MENU_ITEMS = [
 ];
 
 export default function ProfileScreen() {
-  const user = placeholderUser;
-
+  const { user, logout } = useAuth();
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <ScrollView>
@@ -37,9 +28,6 @@ export default function ProfileScreen() {
           <View>
             <Text style={styles.name}>{user.name}</Text>
             <Text style={styles.email}>{user.email}</Text>
-            <View style={styles.tierPill}>
-              <Text style={styles.tierText}>✦ {user.tier}</Text>
-            </View>
           </View>
         </View>
 
@@ -47,18 +35,18 @@ export default function ProfileScreen() {
           {/* Stats */}
           <View style={styles.stats}>
             <View style={styles.stat}>
-              <Text style={styles.statNum}>{user.orders}</Text>
+              <Text style={styles.statNum}>0</Text>
               <Text style={styles.statLabel}>ORDERS</Text>
             </View>
             <View style={styles.stat}>
-              <Text style={styles.statNum}>{user.points.toLocaleString()}</Text>
+              <Text style={styles.statNum}>—</Text>
               <Text style={styles.statLabel}>POINTS</Text>
             </View>
             <View style={styles.stat}>
-              <Text style={styles.statNum}>{user.saved}</Text>
+              <Text style={styles.statNum}>—</Text>
               <Text style={styles.statLabel}>SAVED</Text>
             </View>
-          </View>
+          </View>          
 
           {/* Menu */}
           <View style={styles.menu}>
@@ -78,6 +66,9 @@ export default function ProfileScreen() {
               </TouchableOpacity>
             ))}
           </View>
+          <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
+            <Text style={styles.logoutText}>Log out</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -139,6 +130,15 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.line,
   },
+  logoutBtn: {
+  marginTop: 24,
+  paddingVertical: 14,
+  alignItems: "center",
+  borderWidth: 1,
+  borderColor: colors.line,
+  borderRadius: 14,
+  },
+  logoutText: { fontFamily: fonts.sansBold, fontSize: 13, color: "#c0392b" },
   mi: {
     width: 38,
     height: 38,

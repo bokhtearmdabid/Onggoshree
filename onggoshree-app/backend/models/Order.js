@@ -12,8 +12,11 @@ const orderItemSchema = new mongoose.Schema(
 
 const orderSchema = new mongoose.Schema(
   {
-    // TODO: once auth is built, make this required and set it from the logged-in user's token
-    // instead of trusting the client. For now, orders are "guest" orders.
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     items: {
       type: [orderItemSchema],
       required: true,

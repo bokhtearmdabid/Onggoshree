@@ -1,3 +1,4 @@
+// (User isn't directly needed here — req.user comes from the auth middleware — but Product already is)
 const Order = require("../models/Order");
 const Product = require("../models/Product");
 
@@ -41,6 +42,7 @@ const createOrder = async (req, res) => {
     const total = subtotal + deliveryFee;
 
     const order = await Order.create({
+      user: req.user._id,
       items: orderItems,
       subtotal,
       deliveryFee,
@@ -49,6 +51,16 @@ const createOrder = async (req, res) => {
       phone,
       address,
     });
+
+    // GET /api/orders/mine  (protected)
+    const getMyOrders = async (req, res) => {
+      try {
+        const orders = await Order.find({ user: req.user._id }).sort({ createdAt: -1 });
+        res.json(orders);
+      } catch (error) {
+        res.status(500).json({ message: "Failed to fetch orders", error: error.message });
+      }
+    };    
 
     res.status(201).json(order);
   } catch (error) {
@@ -69,4 +81,13 @@ const getOrderById = async (req, res) => {
   }
 };
 
-module.exports = { createOrder, getOrderById };
+const getMyOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({ user: req.user._id }).sort({ createdAt: -1 });
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch orders", error: error.message });
+  }
+};
+
+module.exports = { createOrder, getOrderById, getMyOrders };
