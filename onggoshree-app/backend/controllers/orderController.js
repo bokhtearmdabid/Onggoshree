@@ -35,14 +35,23 @@ const createOrder = async (req, res) => {
       await product.save();
     }
 
-    const deliveryFee = 60;
-    const total = subtotal + deliveryFee;
+const deliveryFee = 60;
+
+// Apply any pending reward discount, then clear it so it can't be reused
+      let discount = 0;
+      if (req.user.activeReward) {
+        discount = req.user.activeReward.discountAmount;
+        await User.findByIdAndUpdate(req.user._id, { activeReward: null });
+      }
+
+const total = Math.max(0, subtotal + deliveryFee - discount);
 
     const order = await Order.create({
       user: req.user._id,
       items: orderItems,
       subtotal,
       deliveryFee,
+      discount,
       total,
       customerName,
       phone,

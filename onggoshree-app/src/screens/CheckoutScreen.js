@@ -24,9 +24,11 @@ export default function CheckoutScreen({ navigation }) {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const { refreshUser } = useAuth();
+  const { refreshUser, user } = useAuth();
+  const activeReward = user?.activeReward;
+  const discount = activeReward?.discountAmount || 0;
 
-  const total = subtotal + DELIVERY_FEE;
+  const total = Math.max(0, subtotal + DELIVERY_FEE - discount);
 
   const handlePlaceOrder = async () => {
     if (!name.trim() || !phone.trim() || !address.trim()) {
@@ -110,6 +112,12 @@ export default function CheckoutScreen({ navigation }) {
             <Text style={styles.srowLabel}>Delivery · inside Dhaka</Text>
             <Text style={styles.srowValue}>৳{DELIVERY_FEE}</Text>
           </View>
+          {activeReward && (
+          <View style={styles.srow}>
+            <Text style={styles.srowDiscLabel}>Glow Club discount</Text>
+            <Text style={styles.srowDiscValue}>−৳{discount}</Text>
+          </View>
+          )}
           <View style={[styles.srow, styles.srowTotal]}>
             <Text style={styles.srowTotalLabel}>Total</Text>
             <Text style={styles.srowTotalValue}>৳{total.toFixed(0)}</Text>
@@ -192,4 +200,6 @@ const styles = StyleSheet.create({
   placeBtnDisabled: { opacity: 0.6 },
   placeBtnText: { fontFamily: fonts.sansBold, fontSize: 13.5, color: "#fff" },
   placeBtnPrice: { color: colors.glow },
+  srowDiscLabel: { fontFamily: fonts.sans, fontSize: 12.5, color: colors.leaf },
+  srowDiscValue: { fontFamily: fonts.sansBold, fontSize: 12.5, color: colors.leaf },
 });

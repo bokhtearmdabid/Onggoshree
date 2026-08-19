@@ -1,9 +1,10 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
 import { colors, fonts } from "../constants/theme";
+import { redeemDiscount } from "../api/api";
 
 const TIER_THRESHOLDS = [
   { name: "Bronze", min: 0 },
@@ -12,9 +13,9 @@ const TIER_THRESHOLDS = [
   { name: "Gold", min: 1500 },
 ];
 
-// Reward redemption isn't wired up yet — these show real, live point costs,
-// but tapping one doesn't deduct points or apply anything at checkout.
-// That's a separate feature: a redeem endpoint + a discount step in Checkout.
+// Reward redemption is only fully wired up for the first reward (৳100 off).
+// The other two are shown for real (locked/unlocked based on real points)
+// but tapping them doesn't do anything yet.
 const REWARDS = [
   { icon: "gift", title: "৳100 off any order", subtitle: "Applied at checkout", cost: 500 },
   { icon: "heart", title: "Free Lip Balm", subtitle: "Add to any bag", cost: 800 },
@@ -22,13 +23,31 @@ const REWARDS = [
 ];
 
 export default function ClubScreen() {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const points = user?.points ?? 0;
   const tier = user?.tier ?? "Bronze";
+  const activeReward = user?.activeReward;
 
   const currentIndex = TIER_THRESHOLDS.findIndex((t) => t.name === tier);
   const nextTier = TIER_THRESHOLDS[currentIndex + 1];
   const pointsToNext = nextTier ? nextTier.min - points : 0;
+
+  const handleRedeem = async (reward) => {
+    if (activeReward) {
+      Alert.alert("Reward already active", "Use your current reward at checkout before redeeming another.");
+      return;
+    }
+    if (points < reward.cost) return;
+
+    try {
+      await redeemDiscount();
+      await refreshUser();
+      Alert.alert("Redeemed!", `${reward.title} will be applied to your next order.`);
+    } catch (error) {
+      const message = error.response?.data?.message;
+      Alert.alert("Couldn't redeem", message || "Something went wrong. Please try again.");
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -53,14 +72,30 @@ export default function ClubScreen() {
               "You've reached the top tier"
             )}
           </Text>
+
+          {activeReward && (
+            <View style={styles.activeRewardBanner}>
+              <Feather name="check-circle" size={13} color={colors.glow} />
+              <Text style={styles.activeRewardText}>{activeReward.label} ready to use</Text>
+            </View>
+          )}
         </View>
 
         <View style={styles.body}>
           <Text style={styles.lbl}>Redeem rewards</Text>
-          {REWARDS.map((r) => {
+          {REWARDS.map((r, index) => {
             const locked = points < r.cost;
+            const isRedeemable = index === 0;
+            const Wrapper = isRedeemable ? TouchableOpacity : View;
+
             return (
-              <View key={r.title} style={[styles.reward, locked && styles.rewardLocked]}>
+              <Wrapper
+                key={r.title}
+                style={[styles.reward, locked && styles.rewardLocked]}
+                {...(isRedeemable
+                  ? { onPress: () => handleRedeem(r), activeOpacity: 0.7, disabled: locked }
+                  : {})}
+              >
                 <View style={styles.rewardIcon}>
                   <Feather name={r.icon} size={16} color={colors.leaf} />
                 </View>
@@ -69,7 +104,7 @@ export default function ClubScreen() {
                   <Text style={styles.rewardSubtitle}>{r.subtitle}</Text>
                 </View>
                 <Text style={styles.rewardCost}>{r.cost.toLocaleString()} pts</Text>
-              </View>
+              </Wrapper>
             );
           })}
 
@@ -91,7 +126,13 @@ export default function ClubScreen() {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: colors.canvas },
-  hero: { backgroundColor: colors.forest, alignItems: "center", paddingTop: 26, paddingBottom: 32, paddingHorizontal: 20 },
+  hero: {
+    backgroundColor: colors.forest,
+    alignItems: "center",
+    paddingTop: 26,
+    paddingBottom: 32,
+    paddingHorizontal: 20,
+  },
   tierPill: {
     flexDirection: "row",
     alignItems: "center",
@@ -162,4 +203,16 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 13,
   },
+
+  activeRewardBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginTop: 12,
+    backgroundColor: "rgba(231,179,107,0.15)",
+    borderRadius: 20,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+  },
+  activeRewardText: { fontFamily: fonts.sansBold, fontSize: 10.5, color: colors.glow },
 });

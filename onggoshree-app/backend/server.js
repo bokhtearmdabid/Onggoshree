@@ -5,6 +5,7 @@ const connectDB = require("./config/db");
 const productRoutes = require("./routes/productRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const authRoutes = require("./routes/authRoutes");
+const rewardRoutes = require("./routes/rewardRoutes");
 
 const app = express();
 
@@ -13,6 +14,7 @@ connectDB();
 app.use(cors());
 app.use(express.json());
 app.use("/api/auth", authRoutes);
+app.use("/api/rewards", rewardRoutes);
 
 app.get("/", (req, res) => {
   res.json({ message: "E-commerce API is running" });

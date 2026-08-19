@@ -2,7 +2,6 @@ import axios from "axios";
 import { API_URL } from "../constants/config";
 import * as SecureStore from "expo-secure-store";
 
-
 const api = axios.create({
   baseURL: API_URL,
   timeout: 10000,
@@ -37,5 +36,7 @@ export const loginUser = (data) => api.post("/auth/login", data);
 export const getMe = () => api.get("/auth/me");
 
 export const getMyOrders = () => api.get("/orders/mine");
+
+export const redeemDiscount = () => api.post("/rewards/redeem-discount");
 
 export default api;

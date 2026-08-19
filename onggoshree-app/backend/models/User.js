@@ -24,6 +24,17 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    points: {
+  type: Number,
+  default: 0,
+    },
+    activeReward: {
+      type: {
+        label: String,
+        discountAmount: Number,
+      },
+      default: null,
+    },
   },
   { timestamps: true }
 );
