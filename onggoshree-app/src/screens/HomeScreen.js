@@ -13,11 +13,29 @@ import ProductCard from "../components/ProductCard";
 import HeroCarousel from "../components/HeroCarousel";
 import ReelsStrip from "../components/ReelsStrip";
 import { colors, fonts } from "../constants/theme";
+import { useAuth } from "../context/AuthContext";
+
+function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
+}
+
+const TIER_RING_COLORS = {
+  Bronze: "#B07B4B",
+  Silver: "#9CA3AF",
+  Radiant: colors.glow,
+  Gold: "#D4AF37",
+};
 
 export default function HomeScreen({ navigation }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { user } = useAuth();
+  const firstName = user?.name?.split(" ")[0] || "there";
+  const tierRingColor = TIER_RING_COLORS[user?.tier] || colors.leaf;
 
   useEffect(() => {
     getProducts()
@@ -49,13 +67,19 @@ export default function HomeScreen({ navigation }) {
         ListHeaderComponent={
           <>
             <View style={styles.appbar}>
-              <View>
-                <Text style={styles.greetSmall}>Good morning</Text>
-                <Text style={styles.greetName}>Onggoshree</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.greetSmall}>{getGreeting()}</Text>
+                <Text style={styles.greetName}>{firstName}</Text>
               </View>
-              <View style={styles.avatar}>
-                <Text style={styles.avatarText}>O</Text>
-              </View>
+              <TouchableOpacity
+                style={[styles.avatarRing, { borderColor: tierRingColor }]}
+                onPress={() => navigation.navigate("Profile", { screen: "ProfileMain" })}
+                activeOpacity={0.75}
+              >
+                <View style={styles.avatar}>
+                  <Text style={styles.avatarText}>{firstName.charAt(0).toUpperCase()}</Text>
+                </View>
+              </TouchableOpacity>
             </View>
 
             <TouchableOpacity
@@ -118,24 +142,48 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: colors.canvas },
   appbar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 18,
-    paddingTop: 10,
-    paddingBottom: 12,
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-between",
+  paddingHorizontal: 20,
+  paddingTop: 14,
+  paddingBottom: 18,
   },
-  greetSmall: { fontFamily: fonts.sansBold, fontSize: 11, color: colors.muted, letterSpacing: 0.5 },
-  greetName: { fontFamily: fonts.serif, fontSize: 21, color: colors.forest, marginTop: 2 },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.leaf,
+  greetSmall: {
+    fontFamily: fonts.sansBold,
+    fontSize: 10.5,
+    color: colors.muted,
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
+  },
+  greetName: {
+    fontFamily: fonts.serif,
+    fontSize: 24,
+    color: colors.forest,
+    marginTop: 3,
+  },
+  avatarRing: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    borderWidth: 2,
+    padding: 2,
     justifyContent: "center",
     alignItems: "center",
   },
-  avatarText: { fontFamily: fonts.serif, color: colors.glowSoft, fontSize: 16 },
+  avatar: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 21,
+    backgroundColor: colors.forest,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  avatarText: {
+    fontFamily: fonts.serif,
+    fontSize: 17,
+    color: colors.glowSoft,
+  },
   search: {
     backgroundColor: colors.milk,
     borderWidth: 1,

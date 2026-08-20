@@ -13,9 +13,39 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../context/AuthContext";
 import { colors, fonts } from "../constants/theme";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { GOOGLE_WEB_CLIENT_ID } from "../constants/config";
+
+GoogleSignin.configure({
+  webClientId: GOOGLE_WEB_CLIENT_ID,
+});
 
 export default function SignupScreen({ navigation }) {
-  const { register } = useAuth();
+  const { register, loginWithGoogle } = useAuth();
+  const [googleError, setGoogleError] = useState("");
+  const [googleSubmitting, setGoogleSubmitting] = useState(false);
+
+  const handleGoogleSignIn = async () => {
+    setGoogleError("");
+    setGoogleSubmitting(true);
+    try {
+      await GoogleSignin.hasPlayServices();
+      const result = await GoogleSignin.signIn();
+      const idToken = result.data?.idToken;
+
+      if (!idToken) {
+        throw new Error("No ID token returned from Google");
+      }
+
+      await loginWithGoogle(idToken);
+    } catch (error) {
+      console.log("Google sign-in error:", error);
+      const serverMessage = error.response?.data?.message;
+      setGoogleError(serverMessage || "Google sign-in failed. Please try again.");
+    } finally {
+      setGoogleSubmitting(false);
+    }
+  };
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -93,11 +123,29 @@ export default function SignupScreen({ navigation }) {
               {submitting ? <ActivityIndicator color="#fff" /> : <Text style={styles.btnText}>Create account</Text>}
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => navigation.navigate("Login")} style={styles.switchRow}>
-              <Text style={styles.switchText}>
-                Already glowing? <Text style={styles.switchBold}>Sign in</Text>
-              </Text>
-            </TouchableOpacity>
+            <View style={styles.divider}>
+            <View style={styles.dividerLine} />
+            <Text style={styles.dividerText}>or</Text>
+            <View style={styles.dividerLine} />
+          </View>
+
+          {googleError ? <Text style={styles.error}>{googleError}</Text> : null}
+
+          <TouchableOpacity
+            style={styles.googleBtn}
+            disabled={googleSubmitting}
+            onPress={handleGoogleSignIn}
+          >
+            <Text style={styles.googleBtnText}>
+              {googleSubmitting ? "Signing in..." : "Continue with Google"}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => navigation.navigate("Login")} style={styles.switchRow}>
+            <Text style={styles.switchText}>
+              Already glowing? <Text style={styles.switchBold}>Sign in</Text>
+            </Text>
+          </TouchableOpacity>
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -133,4 +181,17 @@ const styles = StyleSheet.create({
   switchRow: { alignItems: "center", marginTop: 18 },
   switchText: { fontFamily: fonts.sans, fontSize: 12.5, color: colors.muted },
   switchBold: { fontFamily: fonts.sansBold, color: colors.forest },
+  divider: { flexDirection: "row", alignItems: "center", gap: 10, marginTop: 22 },
+  dividerLine: { flex: 1, height: 1, backgroundColor: colors.line },
+  dividerText: { fontFamily: fonts.sans, fontSize: 11, color: colors.muted },
+  googleBtn: {
+    borderWidth: 1,
+    borderColor: colors.line,
+    backgroundColor: "#fff",
+    borderRadius: 14,
+    paddingVertical: 14,
+    alignItems: "center",
+    marginTop: 16,
+  },
+  googleBtnText: { fontFamily: fonts.sansBold, fontSize: 13, color: colors.forest },
 });
