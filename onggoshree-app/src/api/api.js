@@ -39,4 +39,6 @@ export const getMyOrders = () => api.get("/orders/mine");
 
 export const redeemDiscount = () => api.post("/rewards/redeem-discount");
 
+export const googleLoginRequest = (idToken) => api.post("/auth/google", { idToken });
+
 export default api;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,6 +13,13 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../context/AuthContext";
 import { colors, fonts } from "../constants/theme";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { GOOGLE_WEB_CLIENT_ID } from "../constants/config";
+import { GOOGLE_ANDROID_CLIENT_ID } from "../constants/config";
+
+GoogleSignin.configure({
+  webClientId: GOOGLE_WEB_CLIENT_ID,
+});
 
 export default function LoginScreen({ navigation }) {
   const { login } = useAuth();
@@ -20,6 +27,32 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const { loginWithGoogle } = useAuth();
+  const [googleError, setGoogleError] = useState("");
+
+  const [googleSubmitting, setGoogleSubmitting] = useState(false);
+
+  const handleGoogleSignIn = async () => {
+    setGoogleError("");
+    setGoogleSubmitting(true);
+    try {
+      await GoogleSignin.hasPlayServices();
+      const result = await GoogleSignin.signIn();
+      const idToken = result.data?.idToken;
+
+      if (!idToken) {
+        throw new Error("No ID token returned from Google");
+      }
+
+      await loginWithGoogle(idToken);
+    } catch (error) {
+      console.log("Google sign-in error:", error);
+      const serverMessage = error.response?.data?.message;
+      setGoogleError(serverMessage || "Google sign-in failed. Please try again.");
+    } finally {
+      setGoogleSubmitting(false);
+    }
+  };
 
   const handleLogin = async () => {
     setError("");
@@ -84,11 +117,29 @@ export default function LoginScreen({ navigation }) {
               {submitting ? <ActivityIndicator color="#fff" /> : <Text style={styles.btnText}>Sign in</Text>}
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => navigation.navigate("Signup")} style={styles.switchRow}>
-              <Text style={styles.switchText}>
-                New here? <Text style={styles.switchBold}>Create an account</Text>
-              </Text>
-            </TouchableOpacity>
+            <View style={styles.divider}>
+            <View style={styles.dividerLine} />
+            <Text style={styles.dividerText}>or</Text>
+            <View style={styles.dividerLine} />
+          </View>
+
+          {googleError ? <Text style={styles.error}>{googleError}</Text> : null}
+
+          <TouchableOpacity
+            style={styles.googleBtn}
+            disabled={googleSubmitting}
+            onPress={handleGoogleSignIn}
+          >
+            <Text style={styles.googleBtnText}>
+              {googleSubmitting ? "Signing in..." : "Continue with Google"}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => navigation.navigate("Signup")} style={styles.switchRow}>
+            <Text style={styles.switchText}>
+              New here? <Text style={styles.switchBold}>Create an account</Text>
+            </Text>
+          </TouchableOpacity>
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -124,4 +175,18 @@ const styles = StyleSheet.create({
   switchRow: { alignItems: "center", marginTop: 18 },
   switchText: { fontFamily: fonts.sans, fontSize: 12.5, color: colors.muted },
   switchBold: { fontFamily: fonts.sansBold, color: colors.forest },
+
+  divider: { flexDirection: "row", alignItems: "center", gap: 10, marginTop: 22 },
+  dividerLine: { flex: 1, height: 1, backgroundColor: colors.line },
+  dividerText: { fontFamily: fonts.sans, fontSize: 11, color: colors.muted },
+  googleBtn: {
+    borderWidth: 1,
+    borderColor: colors.line,
+    backgroundColor: "#fff",
+    borderRadius: 14,
+    paddingVertical: 14,
+    alignItems: "center",
+    marginTop: 16,
+  },
+  googleBtnText: { fontFamily: fonts.sansBold, fontSize: 13, color: colors.forest },
 });

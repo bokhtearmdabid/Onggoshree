@@ -35,8 +35,11 @@
           "cameraPermission": "Onggoshree uses your camera to analyze your skin and recommend the right products for you!"
         }
       ],
+      "@react-native-google-signin/google-signin",
       "expo-secure-store",
-      "expo-video"
+      "expo-video",
+      "expo-web-browser",
+      "@react-native-google-signin/google-signin"
     ]
   }
 }

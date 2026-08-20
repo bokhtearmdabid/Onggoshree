@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
 import { registerUser, loginUser, getMe } from "../api/api";
+import { googleLoginRequest } from "../api/api";
 
 const AuthContext = createContext(null);
 
@@ -34,6 +35,13 @@ export function AuthProvider({ children }) {
     setUser(userData);
   };
 
+    const loginWithGoogle = async (idToken) => {
+    const response = await googleLoginRequest(idToken);
+    const { token, ...userData } = response.data;
+    await SecureStore.setItemAsync("authToken", token);
+    setUser(userData);
+  };
+
   const login = async (email, password) => {
     const response = await loginUser({ email, password });
     const { token, ...userData } = response.data;
@@ -56,7 +64,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, register, login, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, register, login, loginWithGoogle, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );
