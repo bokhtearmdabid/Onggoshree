@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   TextInput,
+  Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getProducts } from "../api/api";
@@ -16,9 +17,9 @@ import { Feather } from "@expo/vector-icons";
 
 const CATEGORIES = ["All", "Facial", "Serum", "Gel", "Bar", "Hair"];
 
-export default function ShopScreen({ navigation }) {
+export default function ShopScreen({ navigation, route }) {
   const [products, setProducts] = useState([]);
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [activeCategory, setActiveCategory] = useState(route.params?.category || "All");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { totalItems } = useCart();
@@ -114,7 +115,11 @@ export default function ShopScreen({ navigation }) {
               onPress={() => navigation.navigate("ProductDetail", { productId: item._id })}
             >
               <View style={styles.cardImage}>
-                <Text style={styles.cardLetter}>{item.name.charAt(0).toUpperCase()}</Text>
+                {item.imageUrl ? (
+                  <Image source={{ uri: item.imageUrl }} style={styles.cardImagePhoto} resizeMode="cover" />
+                ) : (
+                  <Text style={styles.cardLetter}>{item.name.charAt(0).toUpperCase()}</Text>
+                )}
               </View>
               <Text style={styles.cardCat}>{item.category?.toUpperCase()}</Text>
               <Text style={styles.cardName} numberOfLines={1}>{item.name}</Text>
@@ -251,4 +256,9 @@ badge: {
   alignItems: "center",
 },
 badgeText: { fontSize: 9, fontWeight: "800", color: "#40300f" },
+cardImagePhoto: {
+  width: "100%",
+  height: "100%",
+  borderRadius: 14,
+},
 });

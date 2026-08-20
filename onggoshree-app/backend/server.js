@@ -6,6 +6,7 @@ const productRoutes = require("./routes/productRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const authRoutes = require("./routes/authRoutes");
 const rewardRoutes = require("./routes/rewardRoutes");
+const path = require("path");
 
 const app = express();
 
@@ -13,6 +14,8 @@ connectDB();
 
 app.use(cors());
 app.use(express.json());
+app.use("/images", express.static(path.join(__dirname, "public/images")));
+app.use("/videos", express.static(path.join(__dirname, "public/videos")));
 app.use("/api/auth", authRoutes);
 app.use("/api/rewards", rewardRoutes);
 

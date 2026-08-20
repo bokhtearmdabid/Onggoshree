@@ -35,7 +35,8 @@
           "cameraPermission": "Onggoshree uses your camera to analyze your skin and recommend the right products for you!"
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-video"
     ]
   }
 }

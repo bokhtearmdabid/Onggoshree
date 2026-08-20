@@ -1,14 +1,18 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { colors, fonts } from "../constants/theme";
 
 export default function ProductCard({ product, onPress }) {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.85}>
       <View style={styles.imageBox}>
-        <Text style={styles.imagePlaceholder}>
-          {product.name.charAt(0).toUpperCase()}
-        </Text>
+        {product.imageUrl ? (
+          <Image source={{ uri: product.imageUrl }} style={styles.image} resizeMode="cover" />
+        ) : (
+          <Text style={styles.imagePlaceholder}>
+            {product.name.charAt(0).toUpperCase()}
+          </Text>
+        )}
       </View>
       <Text style={styles.name} numberOfLines={1}>{product.name}</Text>
       <View style={styles.row}>
@@ -74,5 +78,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
     marginTop: -1,
+  },
+  image: {
+  width: "100%",
+  height: "100%",
+  borderRadius: 14,
   },
 });

@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  Image,
 } from "react-native";
 import { getProductById } from "../api/api";
 import { colors, fonts } from "../constants/theme";
@@ -57,7 +58,11 @@ export default function ProductDetailScreen({ route, navigation }) {
               <Feather name="heart" size={18} color={colors.forest} />
             </TouchableOpacity>
           </View>
-          <Text style={styles.heroLetter}>{product.name.charAt(0).toUpperCase()}</Text>
+          {product.imageUrl ? (
+              <Image source={{ uri: product.imageUrl }} style={styles.heroImage} resizeMode="cover" />
+            ) : (
+              <Text style={styles.heroLetter}>{product.name.charAt(0).toUpperCase()}</Text>
+            )}
         </View>
 
         {/* Details */}
@@ -246,5 +251,9 @@ const styles = StyleSheet.create({
   },
   addBtnPrice: {
     color: colors.glow,
+  },
+  heroImage: {
+  width: "100%",
+  height: "100%",
   },
 });

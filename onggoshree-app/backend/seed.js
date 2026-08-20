@@ -2,6 +2,7 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const Product = require("./models/Product");
 
+// Add Product here!
 const products = [
   {
     name: "Chlorophyll Facial",
@@ -10,6 +11,7 @@ const products = [
     price: 399,
     category: "Facial",
     stock: 40,
+    imageUrl: "http://192.168.0.108:5000/images/products/chlorophyll-facial.jpg",
   },
   {
     name: "Acno Facial",
@@ -18,6 +20,7 @@ const products = [
     price: 399,
     category: "Facial",
     stock: 35,
+    imageUrl: "http://192.168.0.108:5000/images/products/acno-facial.jpg",
   },
   {
     name: "Pure Glow Serum",
@@ -26,6 +29,7 @@ const products = [
     price: 1199,
     category: "Serum",
     stock: 25,
+    imageUrl: "http://192.168.0.108:5000/images/products/pure-glow-serum.jpg"
   },
   {
     name: "Acno Gel",
@@ -34,6 +38,7 @@ const products = [
     price: 799,
     category: "Gel",
     stock: 30,
+    imageUrl: "http://192.168.0.108:5000/images/products/acno-gel.jpg"
   },
   {
     name: "Chlorophyll Bar",
@@ -42,6 +47,7 @@ const products = [
     price: 399,
     category: "Bar",
     stock: 50,
+    imageUrl: "http://192.168.0.108:5000/images/products/chlorophyll-bar.jpg"
   },
   {
     name: "Keshraj Hair Oil",
@@ -50,6 +56,7 @@ const products = [
     price: 599,
     category: "Hair",
     stock: 45,
+    imageUrl: "http://192.168.0.108:5000/images/products/keshraj-hair-oil.jpg"
   },
 ];
 

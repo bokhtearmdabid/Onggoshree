@@ -5,12 +5,14 @@ import {
   FlatList,
   StyleSheet,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getProducts } from "../api/api";
 import ProductCard from "../components/ProductCard";
+import HeroCarousel from "../components/HeroCarousel";
+import ReelsStrip from "../components/ReelsStrip";
 import { colors, fonts } from "../constants/theme";
-import { TouchableOpacity } from "react-native";
 
 export default function HomeScreen({ navigation }) {
   const [products, setProducts] = useState([]);
@@ -27,92 +29,104 @@ export default function HomeScreen({ navigation }) {
       .finally(() => setLoading(false));
   }, []);
 
+  const goToShop = (category) => {
+    navigation.navigate("Shop", { screen: "ShopMain", params: { category } });
+  };
+
+  // Rendering the whole screen as ONE FlatList (products as the list data,
+  // everything above as a "header") instead of nesting a ScrollView around
+  // another scrollable list. Nesting scrollables like that causes janky,
+  // sometimes broken scroll behavior — this is the correct RN pattern for
+  // "some fixed content, then a scrollable grid" layouts.
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* Header: greeting + avatar */}
-      <View style={styles.appbar}>
-        <View>
-          <Text style={styles.greetSmall}>Good morning</Text>
-          <Text style={styles.greetName}>Onggoshree</Text>
-        </View>
-        <View style={styles.spacer} />
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>O</Text>
-        </View>
-      </View>
+      <FlatList
+        data={products.slice(0, 4)}
+        keyExtractor={(item) => item._id}
+        numColumns={2}
+        columnWrapperStyle={{ gap: 13, paddingHorizontal: 18, marginBottom: 16 }}
+        contentContainerStyle={{ paddingBottom: 20 }}
+        ListHeaderComponent={
+          <>
+            <View style={styles.appbar}>
+              <View>
+                <Text style={styles.greetSmall}>Good morning</Text>
+                <Text style={styles.greetName}>Onggoshree</Text>
+              </View>
+              <View style={styles.avatar}>
+                <Text style={styles.avatarText}>O</Text>
+              </View>
+            </View>
 
-      {/* Search bar */}
-      <TouchableOpacity
-        style={styles.search}
-        onPress={() => navigation.navigate("Shop", { screen: "ShopMain" })}
-      >
-        <Text style={styles.searchText}>Search products...</Text>
-      </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.search}
+              onPress={() => navigation.navigate("Shop", { screen: "ShopMain" })}
+            >
+              <Text style={styles.searchText}>Search products...</Text>
+            </TouchableOpacity>
 
-      {/* Section header */}
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Bestsellers</Text>
-      </View>
+            <View style={{ marginBottom: 22 }}>
+              <HeroCarousel onPressBanner={goToShop} />
+            </View>
 
-      {loading && (
-        <View style={styles.center}>
-          <ActivityIndicator size="large" color={colors.leaf} />
-        </View>
-      )}
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Watch & shop</Text>
+            </View>
+            <View style={{ marginBottom: 24 }}>
+              <ReelsStrip onPressReel={() => goToShop("All")} />
+            </View>
 
-      {error && (
-        <View style={styles.center}>
-          <Text style={styles.errorText}>{error}</Text>
-        </View>
-      )}
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Bestsellers</Text>
+            </View>
 
-      {!loading && !error && (
-        <FlatList
-          data={products}
-          keyExtractor={(item) => item._id}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.list}
-          renderItem={({ item }) => (
-              <ProductCard
-                product={item}
-                onPress={() => navigation.navigate("ProductDetail", { productId: item._id })}
-              />
+            {error && (
+              <View style={styles.center}>
+                <Text style={styles.errorText}>{error}</Text>
+              </View>
             )}
-          ListEmptyComponent={
-            <Text style={styles.emptyText}>No products yet.</Text>
-          }
-        />
-      )}
+            {loading && (
+              <View style={styles.center}>
+                <ActivityIndicator size="large" color={colors.leaf} />
+              </View>
+            )}
+          </>
+        }
+        renderItem={({ item }) =>
+          !loading && !error ? (
+            <ProductCard
+              product={item}
+              onPress={() => navigation.navigate("ProductDetail", { productId: item._id })}
+            />
+          ) : null
+        }
+        ListFooterComponent={
+          !loading && !error && products.length > 0 ? (
+            <TouchableOpacity
+              style={styles.viewAllBtn}
+              onPress={() => navigation.navigate("Shop", { screen: "ShopMain" })}
+            >
+              <Text style={styles.viewAllText}>View all products</Text>
+            </TouchableOpacity>
+          ) : null
+        }
+      />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: colors.canvas,
-  },
+  safeArea: { flex: 1, backgroundColor: colors.canvas },
   appbar: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 18,
     paddingTop: 10,
     paddingBottom: 12,
   },
-  spacer: { flex: 1 },
-  greetSmall: {
-    fontFamily: fonts.sansBold,
-    fontSize: 11,
-    color: colors.muted,
-    letterSpacing: 0.5,
-  },
-  greetName: {
-    fontFamily: fonts.serif,
-    fontSize: 21,
-    color: colors.forest,
-    marginTop: 2,
-  },
+  greetSmall: { fontFamily: fonts.sansBold, fontSize: 11, color: colors.muted, letterSpacing: 0.5 },
+  greetName: { fontFamily: fonts.serif, fontSize: 21, color: colors.forest, marginTop: 2 },
   avatar: {
     width: 40,
     height: 40,
@@ -121,11 +135,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  avatarText: {
-    fontFamily: fonts.serif,
-    color: colors.glowSoft,
-    fontSize: 16,
-  },
+  avatarText: { fontFamily: fonts.serif, color: colors.glowSoft, fontSize: 16 },
   search: {
     backgroundColor: colors.milk,
     borderWidth: 1,
@@ -134,37 +144,21 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 15,
     marginHorizontal: 18,
-    marginBottom: 14,
+    marginBottom: 20,
   },
-  searchText: {
-    fontFamily: fonts.sans,
-    fontSize: 13.5,
-    color: colors.muted,
+  searchText: { fontFamily: fonts.sans, fontSize: 13.5, color: colors.muted },
+  sectionHeader: { paddingHorizontal: 18, marginBottom: 13 },
+  sectionTitle: { fontFamily: fonts.serif, fontSize: 19, color: colors.forest },
+  center: { paddingVertical: 40, alignItems: "center" },
+  errorText: { fontFamily: fonts.sans, color: "#c0392b", textAlign: "center", paddingHorizontal: 30 },
+  viewAllBtn: {
+  marginHorizontal: 18,
+  marginTop: 16,
+  paddingVertical: 14,
+  borderRadius: 14,
+  borderWidth: 1,
+  borderColor: colors.leaf,
+  alignItems: "center",
   },
-  sectionHeader: {
-    paddingHorizontal: 18,
-    marginBottom: 13,
-  },
-  sectionTitle: {
-    fontFamily: fonts.serif,
-    fontSize: 19,
-    color: colors.forest,
-  },
-  list: {
-    paddingHorizontal: 18,
-  },
-  center: {
-    paddingVertical: 40,
-    alignItems: "center",
-  },
-  errorText: {
-    fontFamily: fonts.sans,
-    color: "#c0392b",
-    textAlign: "center",
-    paddingHorizontal: 30,
-  },
-  emptyText: {
-    fontFamily: fonts.sans,
-    color: colors.muted,
-  },
+  viewAllText: { fontFamily: fonts.sansBold, fontSize: 13, color: colors.leaf },
 });
