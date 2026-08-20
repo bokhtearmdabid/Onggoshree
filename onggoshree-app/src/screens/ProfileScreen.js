@@ -65,6 +65,8 @@ useEffect(() => {
                   activeOpacity={0.6}
                   onPress={() => {
                     if (item.label === "My orders") navigation.navigate("Orders");
+                    if (item.label === "Help & support") navigation.navigate("Help");
+                    if (item.label === "Addresses") navigation.navigate("Addresses");
                   }}
                 >
                 <View style={styles.mi}>

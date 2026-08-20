@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -15,23 +15,48 @@ import { createOrder } from "../api/api";
 import { colors, fonts } from "../constants/theme";
 import { Feather } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
+import { useFocusEffect } from "@react-navigation/native";
+import { getMyAddresses } from "../api/api";
 
 const DELIVERY_FEE = 60;
 
 export default function CheckoutScreen({ navigation }) {
   const { items, subtotal, clearCart } = useCart();
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
-  const [submitting, setSubmitting] = useState(false);
   const { refreshUser, user } = useAuth();
+
+  const [addresses, setAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
+  const [loadingAddresses, setLoadingAddresses] = useState(true);
+  const [name, setName] = useState(user?.name || "");
+  const [submitting, setSubmitting] = useState(false);
+
+  // Manual fallback fields — only used if the user has no saved addresses
+  const [manualAddress, setManualAddress] = useState("");
+  const [manualPhone, setManualPhone] = useState("");
+
+  useFocusEffect(
+    useCallback(() => {
+      getMyAddresses()
+        .then((res) => {
+          setAddresses(res.data);
+          const defaultAddr = res.data.find((a) => a.isDefault) || res.data[0];
+          if (defaultAddr) setSelectedAddressId(defaultAddr._id);
+        })
+        .catch((err) => console.log("Error fetching addresses:", err.message))
+        .finally(() => setLoadingAddresses(false));
+    }, [])
+  );
+
+  const selectedAddress = addresses.find((a) => a._id === selectedAddressId);
   const activeReward = user?.activeReward;
   const discount = activeReward?.discountAmount || 0;
-
   const total = Math.max(0, subtotal + DELIVERY_FEE - discount);
 
   const handlePlaceOrder = async () => {
-    if (!name.trim() || !phone.trim() || !address.trim()) {
+  const finalPhone = selectedAddress ? selectedAddress.phone : manualPhone.trim();
+  const finalAddress = selectedAddress ? selectedAddress.fullAddress : manualAddress.trim();
+
+    if (!name.trim() || !finalPhone || !finalAddress) {
       Alert.alert("Missing details", "Please fill in your name, phone, and address.");
       return;
     }
@@ -41,8 +66,8 @@ export default function CheckoutScreen({ navigation }) {
       const orderPayload = {
         items: items.map((i) => ({ productId: i.productId, qty: i.qty })),
         customerName: name.trim(),
-        phone: phone.trim(),
-        address: address.trim(),
+        phone: finalPhone,
+        address: finalAddress,
       };
 
         const response = await createOrder(orderPayload);
@@ -72,36 +97,67 @@ export default function CheckoutScreen({ navigation }) {
         </View>
 
         <View style={styles.form}>
-          <Text style={styles.label}>Full name</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Anaya Rahman"
-            placeholderTextColor={colors.muted}
-            value={name}
-            onChangeText={setName}
-          />
+        <Text style={styles.label}>Full name</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Anaya Rahman"
+          placeholderTextColor={colors.muted}
+          value={name}
+          onChangeText={setName}
+        />
 
-          <Text style={styles.label}>Phone number</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="01XXXXXXXXX"
-            placeholderTextColor={colors.muted}
-            keyboardType="phone-pad"
-            value={phone}
-            onChangeText={setPhone}
-          />
-
+        <View style={styles.addressHeader}>
           <Text style={styles.label}>Delivery address</Text>
-          <TextInput
-            style={[styles.input, styles.textArea]}
-            placeholder="House, road, area, city"
-            placeholderTextColor={colors.muted}
-            multiline
-            numberOfLines={3}
-            value={address}
-            onChangeText={setAddress}
-          />
+          <TouchableOpacity onPress={() => navigation.navigate("AddressForm")}>
+            <Text style={styles.addNewLink}>+ Add new</Text>
+          </TouchableOpacity>
         </View>
+
+        {loadingAddresses ? (
+          <ActivityIndicator color={colors.leaf} style={{ marginVertical: 10 }} />
+        ) : addresses.length > 0 ? (
+          <View style={styles.addressList}>
+            {addresses.map((addr) => {
+              const selected = addr._id === selectedAddressId;
+              return (
+                <TouchableOpacity
+                  key={addr._id}
+                  style={[styles.addressCard, selected && styles.addressCardOn]}
+                  onPress={() => setSelectedAddressId(addr._id)}
+                >
+                  <View style={styles.addressCardTop}>
+                    <View style={[styles.radio, selected && styles.radioOn]} />
+                    <Text style={styles.addressLabel}>{addr.label}</Text>
+                    {addr.isDefault && <Text style={styles.defaultTag}>DEFAULT</Text>}
+                  </View>
+                  <Text style={styles.addressText}>{addr.fullAddress}</Text>
+                  <Text style={styles.addressPhone}>{addr.phone}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        ) : (
+          <>
+            <TextInput
+              style={styles.input}
+              placeholder="Phone number"
+              placeholderTextColor={colors.muted}
+              keyboardType="phone-pad"
+              value={manualPhone}
+              onChangeText={setManualPhone}
+            />
+            <TextInput
+              style={[styles.input, styles.textArea, { marginTop: 10 }]}
+              placeholder="House, road, area, city"
+              placeholderTextColor={colors.muted}
+              multiline
+              numberOfLines={3}
+              value={manualAddress}
+              onChangeText={setManualAddress}
+            />
+          </>
+        )}
+      </View>
 
         <View style={styles.summary}>
           <View style={styles.srow}>
@@ -202,4 +258,23 @@ const styles = StyleSheet.create({
   placeBtnPrice: { color: colors.glow },
   srowDiscLabel: { fontFamily: fonts.sans, fontSize: 12.5, color: colors.leaf },
   srowDiscValue: { fontFamily: fonts.sansBold, fontSize: 12.5, color: colors.leaf },
+
+  addressHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 14, marginBottom: 8 },
+  addNewLink: { fontFamily: fonts.sansBold, fontSize: 12, color: colors.leaf },
+  addressList: { gap: 10 },
+  addressCard: {
+    backgroundColor: colors.milk,
+    borderWidth: 1.5,
+    borderColor: colors.line,
+    borderRadius: 14,
+    padding: 13,
+  },
+  addressCardOn: { borderColor: colors.leaf },
+  addressCardTop: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 6 },
+  radio: { width: 16, height: 16, borderRadius: 8, borderWidth: 2, borderColor: colors.line },
+  radioOn: { borderColor: colors.leaf, backgroundColor: colors.leaf },
+  addressLabel: { fontFamily: fonts.sansBold, fontSize: 12.5, color: colors.forest, flex: 1 },
+  defaultTag: { fontFamily: fonts.sansBold, fontSize: 8.5, color: colors.amber, letterSpacing: 0.4 },
+  addressText: { fontFamily: fonts.sans, fontSize: 12.5, color: colors.forest, marginLeft: 24 },
+  addressPhone: { fontFamily: fonts.sans, fontSize: 11.5, color: colors.muted, marginLeft: 24, marginTop: 2 },
 });

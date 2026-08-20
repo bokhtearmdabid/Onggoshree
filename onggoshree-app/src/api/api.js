@@ -41,4 +41,10 @@ export const redeemDiscount = () => api.post("/rewards/redeem-discount");
 
 export const googleLoginRequest = (idToken) => api.post("/auth/google", { idToken });
 
+//Address API
+export const getMyAddresses = () => api.get("/addresses/mine");
+export const createAddress = (data) => api.post("/addresses", data);
+export const updateAddress = (id, data) => api.put(`/addresses/${id}`, data);
+export const deleteAddress = (id) => api.delete(`/addresses/${id}`);
+
 export default api;

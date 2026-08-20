@@ -7,6 +7,7 @@ const orderRoutes = require("./routes/orderRoutes");
 const authRoutes = require("./routes/authRoutes");
 const rewardRoutes = require("./routes/rewardRoutes");
 const path = require("path");
+const addressRoutes = require("./routes/addressRoutes");
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use("/images", express.static(path.join(__dirname, "public/images")));
 app.use("/videos", express.static(path.join(__dirname, "public/videos")));
 app.use("/api/auth", authRoutes);
 app.use("/api/rewards", rewardRoutes);
+app.use("/api/addresses", addressRoutes);
 
 app.get("/", (req, res) => {
   res.json({ message: "E-commerce API is running" });

@@ -11,6 +11,7 @@ import CartScreen from "../screens/CartScreen";
 import CheckoutScreen from "../screens/CheckoutScreen";
 import OrderConfirmationScreen from "../screens/OrderConfirmationScreen";
 import ProfileStack from "./ProfileStack";
+import AddressFormScreen from "../screens/AddressFormScreen";
 
 const Tab = createBottomTabNavigator();
 const RootStack = createNativeStackNavigator();
@@ -42,9 +43,15 @@ export default function AppNavigator() {
         <RootStack.Screen 
         name="Checkout" 
         component={CheckoutScreen} />
+        
         <RootStack.Screen 
         name="OrderConfirmation" 
         component={OrderConfirmationScreen} />
+
+        <RootStack.Screen name="AddressForm" 
+        component={AddressFormScreen} 
+        options={{ presentation: "modal" }} />
       </RootStack.Navigator>
+        
   );
 }
