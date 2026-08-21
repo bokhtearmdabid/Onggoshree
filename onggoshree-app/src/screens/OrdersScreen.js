@@ -12,6 +12,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import { getMyOrders } from "../api/api";
 import { colors, fonts } from "../constants/theme";
+import { useAuth } from "../context/AuthContext";
+import SignInPrompt from "../components/SignInPrompt";
 
 const STATUS_COLORS = {
   pending: colors.amber,
@@ -30,10 +32,15 @@ function formatDate(dateString) {
 }
 
 export default function OrdersScreen({ navigation }) {
+  const { user } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
+
+  if (!user) {
+    return <SignInPrompt message="Sign in to view your order history." />;
+  }
 
   const fetchOrders = () => {
     setError(null);

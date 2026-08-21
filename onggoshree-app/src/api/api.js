@@ -2,6 +2,7 @@ import axios from "axios";
 import { API_URL } from "../constants/config";
 import * as SecureStore from "expo-secure-store";
 
+
 const api = axios.create({
   baseURL: API_URL,
   timeout: 10000,
@@ -46,5 +47,10 @@ export const getMyAddresses = () => api.get("/addresses/mine");
 export const createAddress = (data) => api.post("/addresses", data);
 export const updateAddress = (id, data) => api.put(`/addresses/${id}`, data);
 export const deleteAddress = (id) => api.delete(`/addresses/${id}`);
+
+//admin order API calls
+export const getAllOrdersAdmin = () => api.get("/admin/orders");
+export const updateOrderStatusAdmin = (id, status) => api.patch(`/admin/orders/${id}`, { status });
+export const deleteOrderAdmin = (id) => api.delete(`/admin/orders/${id}`);
 
 export default api;

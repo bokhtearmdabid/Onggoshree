@@ -17,6 +17,7 @@ import { Feather } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
 import { useFocusEffect } from "@react-navigation/native";
 import { getMyAddresses } from "../api/api";
+import SignInPrompt from "../components/SignInPrompt";
 
 const DELIVERY_FEE = 60;
 
@@ -51,6 +52,12 @@ export default function CheckoutScreen({ navigation }) {
   const activeReward = user?.activeReward;
   const discount = activeReward?.discountAmount || 0;
   const total = Math.max(0, subtotal + DELIVERY_FEE - discount);
+  
+    if (!user) {
+    return (
+      <SignInPrompt message="Sign in to save your delivery details and complete checkout." />
+    );
+  }
 
   const handlePlaceOrder = async () => {
   const finalPhone = selectedAddress ? selectedAddress.phone : manualPhone.trim();

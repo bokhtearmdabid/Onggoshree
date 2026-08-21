@@ -1,11 +1,11 @@
-import React, { useEffect, useState }  from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { colors, fonts } from "../constants/theme";
 import { Feather } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
 import { getMyOrders } from "../api/api";
-
+import SignInPrompt from "../components/SignInPrompt";
 
 const MENU_ITEMS = [
   { label: "My orders", icon: "package" },
@@ -20,11 +20,17 @@ export default function ProfileScreen({ navigation }) {
   const { user, logout } = useAuth();
   const [orderCount, setOrderCount] = useState(0);
 
-useEffect(() => {
-  getMyOrders()
-    .then((res) => setOrderCount(res.data.length))
-    .catch((err) => console.log("Error fetching order count:", err.message));
-}, []);
+  useEffect(() => {
+    if (!user) return;
+    getMyOrders()
+      .then((res) => setOrderCount(res.data.length))
+      .catch((err) => console.log("Error fetching order count:", err.message));
+  }, [user]);
+
+  if (!user) {
+    return <SignInPrompt message="Sign in to view your profile, orders, and Glow points." />;
+  }
+
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <ScrollView>
@@ -54,21 +60,21 @@ useEffect(() => {
               <Text style={styles.statNum}>—</Text>
               <Text style={styles.statLabel}>SAVED</Text>
             </View>
-          </View>          
+          </View>
 
           {/* Menu */}
           <View style={styles.menu}>
             {MENU_ITEMS.map((item) => (
-                <TouchableOpacity
-                  key={item.label}
-                  style={styles.mrow}
-                  activeOpacity={0.6}
-                  onPress={() => {
-                    if (item.label === "My orders") navigation.navigate("Orders");
-                    if (item.label === "Help & support") navigation.navigate("Help");
-                    if (item.label === "Addresses") navigation.navigate("Addresses");
-                  }}
-                >
+              <TouchableOpacity
+                key={item.label}
+                style={styles.mrow}
+                activeOpacity={0.6}
+                onPress={() => {
+                  if (item.label === "My orders") navigation.navigate("Orders");
+                  if (item.label === "Help & support") navigation.navigate("Help");
+                  if (item.label === "Addresses") navigation.navigate("Addresses");
+                }}
+              >
                 <View style={styles.mi}>
                   <Feather name={item.icon} size={16} color={colors.leaf} />
                 </View>
@@ -82,7 +88,22 @@ useEffect(() => {
                 )}
               </TouchableOpacity>
             ))}
+
+            {user?.isAdmin && (
+              <TouchableOpacity
+                style={styles.mrow}
+                activeOpacity={0.6}
+                onPress={() => navigation.navigate("AdminOrders")}
+              >
+                <View style={[styles.mi, { backgroundColor: "rgba(231,179,107,0.2)" }]}>
+                  <Feather name="shield" size={16} color={colors.amber} />
+                </View>
+                <Text style={styles.ml}>Manage orders (Admin)</Text>
+                <Text style={styles.mc}>›</Text>
+              </TouchableOpacity>
+            )}
           </View>
+
           <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
             <Text style={styles.logoutText}>Log out</Text>
           </TouchableOpacity>
@@ -148,12 +169,12 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.line,
   },
   logoutBtn: {
-  marginTop: 24,
-  paddingVertical: 14,
-  alignItems: "center",
-  borderWidth: 1,
-  borderColor: colors.line,
-  borderRadius: 14,
+    marginTop: 24,
+    paddingVertical: 14,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: colors.line,
+    borderRadius: 14,
   },
   logoutText: { fontFamily: fonts.sansBold, fontSize: 13, color: "#c0392b" },
   mi: {
@@ -166,7 +187,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  miIcon: { fontSize: 15, color: colors.leaf },
   ml: { flex: 1, fontFamily: fonts.sans, fontSize: 13.5, fontWeight: "600", color: colors.forest },
   mc: { color: colors.muted, fontSize: 18 },
   mbadge: {

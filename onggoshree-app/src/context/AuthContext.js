@@ -7,6 +7,7 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [isGuest, setIsGuest] = useState(false);
   const [loading, setLoading] = useState(true); // true while we check for a stored token on app start
 
   useEffect(() => {
@@ -35,6 +36,14 @@ export function AuthProvider({ children }) {
     setUser(userData);
   };
 
+  const continueAsGuest = () => {
+  setIsGuest(true);
+  };
+
+  const exitGuestMode = () => {
+    setIsGuest(false);
+  };
+
     const loginWithGoogle = async (idToken) => {
     const response = await googleLoginRequest(idToken);
     const { token, ...userData } = response.data;
@@ -50,8 +59,9 @@ export function AuthProvider({ children }) {
   };
 
   const logout = async () => {
-    await SecureStore.deleteItemAsync("authToken");
-    setUser(null);
+  await SecureStore.deleteItemAsync("authToken");
+  setUser(null);
+  setIsGuest(false);
   };
 
   const refreshUser = async () => {
@@ -64,7 +74,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, register, login, loginWithGoogle, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, isGuest, register, login, loginWithGoogle, logout, refreshUser, continueAsGuest, exitGuestMode }}>
       {children}
     </AuthContext.Provider>
   );

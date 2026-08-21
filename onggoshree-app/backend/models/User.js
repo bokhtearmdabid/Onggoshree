@@ -31,9 +31,9 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    points: {
-  type: Number,
-  default: 0,
+    isAdmin: {
+      type: Boolean,
+      default: false,
     },
     activeReward: {
       type: {
@@ -65,7 +65,8 @@ const TIER_THRESHOLDS = [
 ];
 
 userSchema.virtual("tier").get(function () {
-  return TIER_THRESHOLDS.find((t) => this.points >= t.min).name;
+  const points = this.points ?? 0;
+  return TIER_THRESHOLDS.find((t) => points >= t.min)?.name;
 });
 
 userSchema.set("toJSON", { virtuals: true });

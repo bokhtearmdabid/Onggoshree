@@ -8,7 +8,7 @@ import AuthStack from "./AuthStack";
 import { colors } from "../constants/theme";
 
 export default function RootNavigator() {
-  const { user, loading } = useAuth();
+  const { user, loading, isGuest } = useAuth();
   const [hasSeenOnboarding, setHasSeenOnboarding] = useState(null); // null = not checked yet
 
   useEffect(() => {
@@ -32,7 +32,7 @@ export default function RootNavigator() {
 
   return (
     <NavigationContainer>
-      {user ? (
+      {user || isGuest ? (
         <AppNavigator />
       ) : (
         <AuthStack

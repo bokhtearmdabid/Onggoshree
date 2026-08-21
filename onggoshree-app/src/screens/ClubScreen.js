@@ -5,6 +5,7 @@ import { Feather } from "@expo/vector-icons";
 import { useAuth } from "../context/AuthContext";
 import { colors, fonts } from "../constants/theme";
 import { redeemDiscount } from "../api/api";
+import SignInPrompt from "../components/SignInPrompt";
 
 const TIER_THRESHOLDS = [
   { name: "Bronze", min: 0 },
@@ -24,6 +25,9 @@ const REWARDS = [
 
 export default function ClubScreen() {
   const { user, refreshUser } = useAuth();
+  if (!user) {
+    return <SignInPrompt message="Sign in to start earning Glow points and unlocking rewards." />;
+  }
   const points = user?.points ?? 0;
   const tier = user?.tier ?? "Bronze";
   const activeReward = user?.activeReward;

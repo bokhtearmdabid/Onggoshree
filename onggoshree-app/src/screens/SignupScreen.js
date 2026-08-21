@@ -21,7 +21,7 @@ GoogleSignin.configure({
 });
 
 export default function SignupScreen({ navigation }) {
-  const { register, loginWithGoogle } = useAuth();
+  const { register, loginWithGoogle, continueAsGuest } = useAuth();
   const [googleError, setGoogleError] = useState("");
   const [googleSubmitting, setGoogleSubmitting] = useState(false);
 
@@ -146,6 +146,10 @@ export default function SignupScreen({ navigation }) {
               Already glowing? <Text style={styles.switchBold}>Sign in</Text>
             </Text>
           </TouchableOpacity>
+
+          <TouchableOpacity onPress={continueAsGuest} style={styles.guestRow}>
+            <Text style={styles.guestText}>Just browsing? View the app</Text>
+          </TouchableOpacity>
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -194,4 +198,6 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   googleBtnText: { fontFamily: fonts.sansBold, fontSize: 13, color: colors.forest },
+  guestRow: { alignItems: "center", marginTop: 14 },
+  guestText: { fontFamily: fonts.sans, fontSize: 12, color: colors.muted },
 });
