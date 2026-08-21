@@ -148,3 +148,12 @@ eas build --profile development --platform android
 ## 📄 License
 
 MIT
+
+<div align="center">
+
+**Made with ❤️ by [Bokhtear Md. Abid](https://bokhtearmdabid.vercel.app/)**
+
+⭐ Star this repo if you find it helpful!
+
+</div>
+
