@@ -60,8 +60,6 @@ const orderConfirmationEmail = (order) => ({
           </p>
         </div>
 
-        <a href="#" style="display: inline-block; background: #16352A; color: #FFFFFF; text-decoration: none; font-size: 14px; font-weight: 600; padding: 13px 28px; border-radius: 10px; margin: 24px 0 0;">অর্ডার ট্র্যাক করুন →</a>
-
         <div style="height: 1px; background: #EAEFEB; margin: 32px 0 24px;"></div>
 
         <p style="margin: 0; color: #6E7D72; font-size: 13px;">— অঙ্গশ্রী টিম</p>

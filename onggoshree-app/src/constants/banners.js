@@ -4,7 +4,7 @@ export const BANNERS = [
     title: "20% off Facials",
     subtitle: "Chlorophyll & Acno lines",
     bg: "#1E4636",
-    image: "http://192.168.0.108:5000/images/banners/facial-promo.jpg",
+    image: "https://onggoshree.onrender.com/images/banners/facial-promo.jpg",
     category: "Facial",
   },
   {
@@ -12,7 +12,7 @@ export const BANNERS = [
     title: "New: Pure Glow Serum",
     subtitle: "Brighter skin in 2 weeks",
     bg: "#3E7C4F",
-    image: "http://192.168.0.108:5000/images/banners/serum-promo.jpg",
+    image: "https://onggoshree.onrender.com/images/banners/serum-promo.jpg",
     category: "Serum",
   },
   {
@@ -20,7 +20,7 @@ export const BANNERS = [
     title: "Hair care, sorted",
     subtitle: "Keshraj Oil restocked",
     bg: "#B07B4B",
-    image: "http://192.168.0.108:5000/images/banners/hair-promo.jpg",
+    image: "https://onggoshree.onrender.com/images/banners/hair-promo.jpg",
     category: "Hair",
   },
 ];
