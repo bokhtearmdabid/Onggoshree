@@ -1,6 +1,8 @@
 const Order = require("../models/Order");
 const Product = require("../models/Product");
 const User = require("../models/User");
+const sendEmail = require("../utils/sendEmail");
+const { orderConfirmationEmail, adminNewOrderEmail } = require("../utils/emailTemplates");
 
 // POST /api/orders
 const createOrder = async (req, res) => {
@@ -58,9 +60,11 @@ const total = Math.max(0, subtotal + deliveryFee - discount);
       address,
     });
 
-    // Earn 1 Glow point per ৳10 spent (subtotal only — delivery fee doesn't earn points)
     const pointsEarned = Math.floor(subtotal / 10);
     await User.findByIdAndUpdate(req.user._id, { $inc: { points: pointsEarned } });
+
+    sendEmail({ to: req.user.email, ...orderConfirmationEmail(order) });
+    sendEmail({ to: process.env.EMAIL_USER, ...adminNewOrderEmail(order) });
 
     res.status(201).json({ ...order.toObject(), pointsEarned });
   } catch (error) {

@@ -2,6 +2,8 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { OAuth2Client } = require("google-auth-library");
 const googleClient = new OAuth2Client();
+const sendEmail = require("../utils/sendEmail");
+const { welcomeEmail } = require("../utils/emailTemplates");
 
 // Creates a signed token containing the user's ID, valid for 30 days
 const generateToken = (userId) => {
@@ -23,6 +25,8 @@ const register = async (req, res) => {
     }
 
     const user = await User.create({ name, email, password });
+
+    sendEmail({ to: user.email, ...welcomeEmail(user.name) }); 
 
     res.status(201).json({
       _id: user._id,
@@ -94,8 +98,9 @@ const googleLogin = async (req, res) => {
         await user.save();
       }
     } else {
-      user = await User.create({ name, email: email.toLowerCase(), googleId });
-    }
+    user = await User.create({ name, email: email.toLowerCase(), googleId });
+    sendEmail({ to: user.email, ...welcomeEmail(user.name) });
+  }
 
     res.json({
       _id: user._id,

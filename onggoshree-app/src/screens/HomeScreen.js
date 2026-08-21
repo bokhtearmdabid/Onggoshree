@@ -63,13 +63,15 @@ export default function HomeScreen({ navigation }) {
         keyExtractor={(item) => item._id}
         numColumns={2}
         columnWrapperStyle={{ gap: 13, paddingHorizontal: 18, marginBottom: 16 }}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={{ paddingBottom: 28 }}
+        showsVerticalScrollIndicator={false}
         ListHeaderComponent={
           <>
-            <View style={styles.appbar}>
-              <View style={{ flex: 1 }}>
+            {/* Brand bar */}
+            <View style={styles.brandBar}>
+              <View style={styles.brandLockup}>
+                <Text style={styles.brandWord}>ONGGOSHREE</Text>
                 <Text style={styles.greetSmall}>{getGreeting()}</Text>
-                <Text style={styles.greetName}>{firstName}</Text>
               </View>
               <TouchableOpacity
                 style={[styles.avatarRing, { borderColor: tierRingColor }]}
@@ -82,26 +84,50 @@ export default function HomeScreen({ navigation }) {
               </TouchableOpacity>
             </View>
 
+            {/* Search */}
             <TouchableOpacity
               style={styles.search}
+              activeOpacity={0.85}
               onPress={() => navigation.navigate("Shop", { screen: "ShopMain" })}
             >
+              <View style={styles.searchIconWrap}>
+                <View style={styles.searchGlassCircle} />
+                <View style={styles.searchGlassHandle} />
+              </View>
               <Text style={styles.searchText}>Search products...</Text>
             </TouchableOpacity>
 
-            <View style={{ marginBottom: 22 }}>
+            {/* Hero */}
+            <View style={{ marginBottom: 26 }}>
               <HeroCarousel onPressBanner={goToShop} />
             </View>
 
+            {/* Watch & shop */}
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Watch & shop</Text>
+              <View style={styles.sectionTitleWrap}>
+                <View style={styles.sectionAccent} />
+                <Text style={styles.sectionTitle}>Watch & shop</Text>
+              </View>
+              <TouchableOpacity onPress={() => goToShop("All")} activeOpacity={0.7}>
+                <Text style={styles.seeAll}>See all</Text>
+              </TouchableOpacity>
             </View>
-            <View style={{ marginBottom: 24 }}>
+            <View style={{ marginBottom: 28 }}>
               <ReelsStrip onPressReel={() => goToShop("All")} />
             </View>
 
+            {/* Bestsellers */}
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Bestsellers</Text>
+              <View style={styles.sectionTitleWrap}>
+                <View style={styles.sectionAccent} />
+                <Text style={styles.sectionTitle}>Bestsellers</Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("Shop", { screen: "ShopMain" })}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.seeAll}>See all</Text>
+              </TouchableOpacity>
             </View>
 
             {error && (
@@ -128,9 +154,11 @@ export default function HomeScreen({ navigation }) {
           !loading && !error && products.length > 0 ? (
             <TouchableOpacity
               style={styles.viewAllBtn}
+              activeOpacity={0.85}
               onPress={() => navigation.navigate("Shop", { screen: "ShopMain" })}
             >
               <Text style={styles.viewAllText}>View all products</Text>
+              <Text style={styles.viewAllArrow}>→</Text>
             </TouchableOpacity>
           ) : null
         }
@@ -141,13 +169,31 @@ export default function HomeScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: colors.canvas },
-  appbar: {
-  flexDirection: "row",
-  alignItems: "center",
-  justifyContent: "space-between",
-  paddingHorizontal: 20,
-  paddingTop: 14,
-  paddingBottom: 18,
+
+  /* Brand bar */
+  brandBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 20,
+  },
+  brandLockup: { flexShrink: 1 },
+  brandWord: {
+    fontFamily: fonts.serif,
+    fontSize: 21,
+    color: colors.forest,
+    letterSpacing: 2.5,
+  },
+
+  /* Greeting */
+  greetBlock: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    paddingHorizontal: 20,
+    marginTop: 10,
+    marginBottom: 18,
   },
   greetSmall: {
     fontFamily: fonts.sansBold,
@@ -160,8 +206,10 @@ const styles = StyleSheet.create({
     fontFamily: fonts.serif,
     fontSize: 24,
     color: colors.forest,
-    marginTop: 3,
+    marginLeft: 9,
   },
+
+  /* Avatar */
   avatarRing: {
     width: 50,
     height: 50,
@@ -170,6 +218,11 @@ const styles = StyleSheet.create({
     padding: 2,
     justifyContent: "center",
     alignItems: "center",
+    shadowColor: colors.forest,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    elevation: 3,
   },
   avatar: {
     width: "100%",
@@ -184,29 +237,107 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: colors.glowSoft,
   },
+
+  /* Search */
   search: {
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: colors.milk,
     borderWidth: 1,
     borderColor: colors.line,
     borderRadius: 16,
-    paddingVertical: 12,
+    paddingVertical: 13,
     paddingHorizontal: 15,
     marginHorizontal: 18,
-    marginBottom: 20,
+    marginBottom: 22,
+    shadowColor: colors.forest,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 9,
+    elevation: 2,
   },
   searchText: { fontFamily: fonts.sans, fontSize: 13.5, color: colors.muted },
-  sectionHeader: { paddingHorizontal: 18, marginBottom: 13 },
-  sectionTitle: { fontFamily: fonts.serif, fontSize: 19, color: colors.forest },
-  center: { paddingVertical: 40, alignItems: "center" },
-  errorText: { fontFamily: fonts.sans, color: "#c0392b", textAlign: "center", paddingHorizontal: 30 },
-  viewAllBtn: {
-  marginHorizontal: 18,
-  marginTop: 16,
-  paddingVertical: 14,
-  borderRadius: 14,
-  borderWidth: 1,
-  borderColor: colors.leaf,
-  alignItems: "center",
+  searchIconWrap: { width: 16, height: 16, marginRight: 11 },
+  searchGlassCircle: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: 11,
+    height: 11,
+    borderRadius: 6,
+    borderWidth: 1.6,
+    borderColor: colors.muted,
   },
-  viewAllText: { fontFamily: fonts.sansBold, fontSize: 13, color: colors.leaf },
+  searchGlassHandle: {
+    position: "absolute",
+    bottom: 1,
+    right: 0,
+    width: 6,
+    height: 1.6,
+    borderRadius: 1,
+    backgroundColor: colors.muted,
+    transform: [{ rotate: "45deg" }],
+  },
+
+  /* Section headers */
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 18,
+    marginBottom: 14,
+  },
+  sectionTitleWrap: { flexDirection: "row", alignItems: "center" },
+  sectionAccent: {
+    width: 3,
+    height: 17,
+    borderRadius: 2,
+    backgroundColor: colors.leaf,
+    marginRight: 9,
+  },
+  sectionTitle: { fontFamily: fonts.serif, fontSize: 19, color: colors.forest },
+  seeAll: {
+    fontFamily: fonts.sansBold,
+    fontSize: 12,
+    color: colors.leaf,
+    letterSpacing: 0.3,
+  },
+
+  /* States */
+  center: { paddingVertical: 40, alignItems: "center" },
+  errorText: {
+    fontFamily: fonts.sans,
+    color: "#c0392b",
+    textAlign: "center",
+    paddingHorizontal: 30,
+  },
+
+  /* View all */
+  viewAllBtn: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 18,
+    marginTop: 18,
+    paddingVertical: 15,
+    borderRadius: 16,
+    backgroundColor: colors.forest,
+    shadowColor: colors.forest,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  viewAllText: {
+    fontFamily: fonts.sansBold,
+    fontSize: 13.5,
+    color: colors.glowSoft,
+    letterSpacing: 0.4,
+  },
+  viewAllArrow: {
+    fontFamily: fonts.sansBold,
+    fontSize: 15,
+    color: colors.glowSoft,
+    marginLeft: 8,
+  },
 });

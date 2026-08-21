@@ -27,6 +27,7 @@
     "expo-web-browser": "~57.0.2",
     "google-auth-library": "^11.0.2",
     "jsonwebtoken": "^9.0.3",
+    "nodemailer": "^9.0.5",
     "react": "19.2.3",
     "react-native": "0.86.2",
     "react-native-safe-area-context": "~5.7.0",
