@@ -16,6 +16,7 @@ import { colors, fonts } from "../constants/theme";
 import { useAuth } from "../context/AuthContext";
 import SkeletonCard from "../components/SkeletonCard";
 import { HOME_CATEGORIES } from "../constants/categories";
+import SocialFollowRow from "../components/SocialFollowRow";
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -192,14 +193,19 @@ export default function HomeScreen({ navigation }) {
         }
         ListFooterComponent={
           !loading && !error && products.length > 0 ? (
-            <TouchableOpacity
-              style={styles.viewAllBtn}
-              activeOpacity={0.85}
-              onPress={() => navigation.navigate("Shop", { screen: "ShopMain" })}
-            >
-              <Text style={styles.viewAllText}>View all products</Text>
-              <Text style={styles.viewAllArrow}>→</Text>
-            </TouchableOpacity>
+            <>
+              <TouchableOpacity
+                style={styles.viewAllBtn}
+                activeOpacity={0.85}
+                onPress={() => navigation.navigate("Shop", { screen: "ShopMain" })}
+              >
+                <Text style={styles.viewAllText}>View all products</Text>
+                <Text style={styles.viewAllArrow}>→</Text>
+              </TouchableOpacity>
+              <View style={{ paddingHorizontal: 18, marginTop: 24 }}>
+                <SocialFollowRow />
+              </View>
+            </>
           ) : null
         }
       />

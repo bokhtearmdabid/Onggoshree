@@ -7,6 +7,7 @@ import { useAuth } from "../context/AuthContext";
 import { getMyOrders } from "../api/api";
 import SignInPrompt from "../components/SignInPrompt";
 
+
 const MENU_ITEMS = [
   { label: "My orders", icon: "package" },
   { label: "Addresses", icon: "map-pin" },
