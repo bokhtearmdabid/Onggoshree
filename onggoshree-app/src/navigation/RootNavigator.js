@@ -6,6 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import AppNavigator from "./AppNavigator";
 import AuthStack from "./AuthStack";
 import { colors } from "../constants/theme";
+import { useWishlist } from "../context/WishlistContext";
 
 export default function RootNavigator() {
   const { user, loading, isGuest } = useAuth();
@@ -16,6 +17,12 @@ export default function RootNavigator() {
       setHasSeenOnboarding(value === "true");
     });
   }, []);
+
+  const { refreshWishlist } = useWishlist();
+
+  useEffect(() => {
+    if (user) refreshWishlist();
+  }, [user]);
 
   const markOnboardingDone = () => {
     SecureStore.setItemAsync("hasSeenOnboarding", "true");

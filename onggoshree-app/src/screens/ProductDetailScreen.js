@@ -11,7 +11,9 @@ import {
 import { getProductById } from "../api/api";
 import { colors, fonts } from "../constants/theme";
 import { useCart } from "../context/CartContext";
-import { Feather } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
+import { useWishlist } from "../context/WishlistContext";
+
 
 export default function ProductDetailScreen({ route, navigation }) {
   const { productId } = route.params;
@@ -19,6 +21,7 @@ export default function ProductDetailScreen({ route, navigation }) {
   const [loading, setLoading] = useState(true);
   const [qty, setQty] = useState(1);
   const { addToCart } = useCart();
+  const { isWishlisted, toggle } = useWishlist();
 
   useEffect(() => {
     getProductById(productId)
@@ -54,8 +57,26 @@ export default function ProductDetailScreen({ route, navigation }) {
             <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.goBack()}>
               <Feather name="arrow-left" size={18} color={colors.forest} />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.iconBtn}>
-              <Feather name="heart" size={18} color={colors.forest} />
+            <TouchableOpacity
+              style={styles.iconBtn}
+              onPress={() => toggle(product._id)}
+            >
+              <Feather
+                name="heart"
+                size={18}
+                color={isWishlisted(product._id) ? "#c0392b" : colors.forest}
+                fill={isWishlisted(product._id) ? "#c0392b" : "none"}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.iconBtn}
+              onPress={() => toggle(product._id)}
+            >
+              <Ionicons
+                name={isWishlisted(product._id) ? "heart" : "heart-outline"}
+                size={19}
+                color={isWishlisted(product._id) ? "#c0392b" : colors.forest}
+              />
             </TouchableOpacity>
           </View>
           {product.imageUrl ? (

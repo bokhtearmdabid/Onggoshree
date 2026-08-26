@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ShopScreen from "../screens/ShopScreen";
 import ProductDetailScreen from "../screens/ProductDetailScreen";
 
+
 const Stack = createNativeStackNavigator();
 
 export default function ShopStack() {

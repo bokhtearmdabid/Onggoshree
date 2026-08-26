@@ -53,4 +53,8 @@ export const getAllOrdersAdmin = () => api.get("/admin/orders");
 export const updateOrderStatusAdmin = (id, status) => api.patch(`/admin/orders/${id}`, { status });
 export const deleteOrderAdmin = (id) => api.delete(`/admin/orders/${id}`);
 
+//wishlist
+export const getMyWishlist = () => api.get("/wishlist/mine");
+export const toggleWishlist = (productId) => api.post("/wishlist/toggle", { productId });
+
 export default api;

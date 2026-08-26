@@ -73,6 +73,7 @@ export default function ProfileScreen({ navigation }) {
                   if (item.label === "My orders") navigation.navigate("Orders");
                   if (item.label === "Help & support") navigation.navigate("Help");
                   if (item.label === "Addresses") navigation.navigate("Addresses");
+                  if (item.label === "Wishlist") navigation.navigate("Wishlist");
                 }}
               >
                 <View style={styles.mi}>

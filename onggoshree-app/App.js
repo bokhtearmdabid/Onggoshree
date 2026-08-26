@@ -16,6 +16,7 @@ import { HindSiliguri_500Medium } from "@expo-google-fonts/hind-siliguri";
 import { CartProvider } from "./src/context/CartContext";
 import { AuthProvider } from "./src/context/AuthContext";
 import RootNavigator from "./src/navigation/RootNavigator";
+import { WishlistProvider } from "./src/context/WishlistContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -44,7 +45,9 @@ export default function App() {
       <View style={{ flex: 1 }} onLayout={onLayout}>
         <AuthProvider>
           <CartProvider>
-            <RootNavigator />
+            <WishlistProvider>
+              <RootNavigator />
+            </WishlistProvider>
           </CartProvider>
         </AuthProvider>
       </View>

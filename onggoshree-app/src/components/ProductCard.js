@@ -1,8 +1,12 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { colors, fonts } from "../constants/theme";
+import { Ionicons } from "@expo/vector-icons";
+import { useWishlist } from "../context/WishlistContext";
 
 export default function ProductCard({ product, onPress }) {
+  const { isWishlisted, toggle } = useWishlist();
+
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.85}>
       <View style={styles.imageBox}>
@@ -13,6 +17,19 @@ export default function ProductCard({ product, onPress }) {
             {product.name.charAt(0).toUpperCase()}
           </Text>
         )}
+        <TouchableOpacity
+          style={styles.heartBtn}
+          onPress={(e) => {
+            e.stopPropagation();
+            toggle(product._id);
+          }}
+        >
+          <Ionicons
+            name={isWishlisted(product._id) ? "heart" : "heart-outline"}
+            size={15}
+            color={isWishlisted(product._id) ? "#c0392b" : "#fff"}
+          />
+        </TouchableOpacity>
       </View>
       <Text style={styles.name} numberOfLines={1}>{product.name}</Text>
       <View style={styles.row}>
@@ -83,5 +100,16 @@ const styles = StyleSheet.create({
   width: "100%",
   height: "100%",
   borderRadius: 14,
+  },
+  heartBtn: {
+  position: "absolute",
+  top: 7,
+  right: 7,
+  width: 26,
+  height: 26,
+  borderRadius: 13,
+  backgroundColor: "rgba(0,0,0,0.25)",
+  justifyContent: "center",
+  alignItems: "center",
   },
 });

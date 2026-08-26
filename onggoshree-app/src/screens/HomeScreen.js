@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
   FlatList,
   StyleSheet,
-  ActivityIndicator,
+  RefreshControl,
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -14,6 +14,8 @@ import HeroCarousel from "../components/HeroCarousel";
 import ReelsStrip from "../components/ReelsStrip";
 import { colors, fonts } from "../constants/theme";
 import { useAuth } from "../context/AuthContext";
+import SkeletonCard from "../components/SkeletonCard";
+import { HOME_CATEGORIES } from "../constants/categories";
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -33,19 +35,33 @@ export default function HomeScreen({ navigation }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
   const { user } = useAuth();
   const firstName = user?.name?.split(" ")[0] || "there";
   const tierRingColor = TIER_RING_COLORS[user?.tier] || colors.leaf;
 
-  useEffect(() => {
+  const fetchProducts = useCallback(() => {
     getProducts()
       .then((response) => setProducts(response.data))
       .catch((err) => {
         console.log("Error fetching products:", err.message);
         setError("Couldn't reach the server. Check API_URL and that the backend is running.");
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        setRefreshing(false);
+      });
   }, []);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setError(null);
+    fetchProducts();
+  }, [fetchProducts]);
 
   const goToShop = (category) => {
     navigation.navigate("Shop", { screen: "ShopMain", params: { category } });
@@ -65,6 +81,14 @@ export default function HomeScreen({ navigation }) {
         columnWrapperStyle={{ gap: 13, paddingHorizontal: 18, marginBottom: 16 }}
         contentContainerStyle={{ paddingBottom: 28 }}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.leaf}
+            colors={[colors.leaf]}
+          />
+        }
         ListHeaderComponent={
           <>
             {/* Brand bar */}
@@ -98,9 +122,24 @@ export default function HomeScreen({ navigation }) {
             </TouchableOpacity>
 
             {/* Hero */}
-            <View style={{ marginBottom: 26 }}>
+            <View style={{ marginBottom: 22 }}>
               <HeroCarousel onPressBanner={goToShop} />
             </View>
+
+            {/* Quick category chips */}
+            <FlatList
+              data={HOME_CATEGORIES}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(item) => item.name}
+              contentContainerStyle={{ paddingHorizontal: 18, gap: 10, marginBottom: 28 }}
+              renderItem={({ item }) => (
+                <TouchableOpacity style={styles.catChip} activeOpacity={0.8} onPress={() => goToShop(item.name)}>
+                  <Text style={styles.catIcon}>{item.icon}</Text>
+                  <Text style={styles.catLabel}>{item.name}</Text>
+                </TouchableOpacity>
+              )}
+            />
 
             {/* Watch & shop */}
             <View style={styles.sectionHeader}>
@@ -136,8 +175,9 @@ export default function HomeScreen({ navigation }) {
               </View>
             )}
             {loading && (
-              <View style={styles.center}>
-                <ActivityIndicator size="large" color={colors.leaf} />
+              <View style={{ flexDirection: "row", paddingHorizontal: 18, marginBottom: 16 }}>
+                <SkeletonCard />
+                <SkeletonCard />
               </View>
             )}
           </>
@@ -188,25 +228,12 @@ const styles = StyleSheet.create({
   },
 
   /* Greeting */
-  greetBlock: {
-    flexDirection: "row",
-    alignItems: "baseline",
-    paddingHorizontal: 20,
-    marginTop: 10,
-    marginBottom: 18,
-  },
   greetSmall: {
     fontFamily: fonts.sansBold,
     fontSize: 10.5,
     color: colors.muted,
     letterSpacing: 0.8,
     textTransform: "uppercase",
-  },
-  greetName: {
-    fontFamily: fonts.serif,
-    fontSize: 24,
-    color: colors.forest,
-    marginLeft: 9,
   },
 
   /* Avatar */
@@ -340,4 +367,17 @@ const styles = StyleSheet.create({
     color: colors.glowSoft,
     marginLeft: 8,
   },
+  catChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 7,
+    backgroundColor: colors.milk,
+    borderWidth: 1,
+    borderColor: colors.line,
+    borderRadius: 20,
+    paddingVertical: 9,
+    paddingHorizontal: 15,
+  },
+  catIcon: { fontSize: 14 },
+  catLabel: { fontFamily: fonts.sansBold, fontSize: 12.5, color: colors.forest },
 });

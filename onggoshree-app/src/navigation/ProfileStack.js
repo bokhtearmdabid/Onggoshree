@@ -6,6 +6,8 @@ import HelpScreen from "../screens/HelpScreen";
 import AddressesScreen from "../screens/AddressesScreen";
 import AddressFormScreen from "../screens/AddressFormScreen";
 import AdminOrdersScreen from "../screens/AdminOrdersScreen";
+import WishlistScreen from "../screens/WishlistScreen";
+import ProductDetailScreen from "../screens/ProductDetailScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -18,6 +20,8 @@ export default function ProfileStack() {
       <Stack.Screen name="Addresses" component={AddressesScreen} />
       <Stack.Screen name="AddressForm" component={AddressFormScreen} />
       <Stack.Screen name="AdminOrders" component={AdminOrdersScreen} />
+      <Stack.Screen name="Wishlist" component={WishlistScreen} />
+      <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
     </Stack.Navigator>
   );
 }
