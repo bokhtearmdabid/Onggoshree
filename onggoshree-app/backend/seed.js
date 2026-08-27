@@ -26,7 +26,8 @@ const products = [
     name: "Pure Glow Serum",
     description:
       "A lightweight, fast-absorbing serum that brightens dull skin and locks in hydration for a natural radiance.",
-    price: 1199,
+    price: 999,
+    compareAtPrice: 1199,
     category: "Serum",
     stock: 25,
     imageUrl: "https://onggoshree.onrender.com/images/products/pure-glow-serum.jpg"
@@ -53,7 +54,8 @@ const products = [
     name: "Keshraj Hair Oil",
     description:
       "A traditional herbal hair oil that strengthens roots, reduces hair fall, and adds natural shine.",
-    price: 599,
+    price: 350,
+    compareAtPrice: 599,
     category: "Hair",
     stock: 45,
     imageUrl: "https://onggoshree.onrender.com/images/products/keshraj-hair-oil.jpg"

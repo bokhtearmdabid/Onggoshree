@@ -18,6 +18,7 @@ import { useAuth } from "../context/AuthContext";
 import { useFocusEffect } from "@react-navigation/native";
 import { getMyAddresses } from "../api/api";
 import SignInPrompt from "../components/SignInPrompt";
+import { isValidBDPhone } from "../utils/validation";
 
 const DELIVERY_FEE = 60;
 
@@ -65,6 +66,10 @@ export default function CheckoutScreen({ navigation }) {
 
     if (!name.trim() || !finalPhone || !finalAddress) {
       Alert.alert("Missing details", "Please fill in your name, phone, and address.");
+      return;
+    }
+    if (!isValidBDPhone(finalPhone)) {
+      Alert.alert("Invalid phone number", "Please enter a valid 11-digit Bangladesh mobile number.");
       return;
     }
 
@@ -147,12 +152,17 @@ export default function CheckoutScreen({ navigation }) {
           <>
             <TextInput
               style={styles.input}
-              placeholder="Phone number"
+              placeholder="01XXXXXXXXX"
               placeholderTextColor={colors.muted}
-              keyboardType="phone-pad"
+              keyboardType="number-pad"
+              maxLength={11}
               value={manualPhone}
-              onChangeText={setManualPhone}
+              onChangeText={(text) => setManualPhone(text.replace(/[^0-9]/g, ""))}
             />
+            {manualPhone.length > 0 && !isValidBDPhone(manualPhone) && (
+              <Text style={styles.errorHint}>Enter a valid 11-digit BD number</Text>
+            )}
+
             <TextInput
               style={[styles.input, styles.textArea, { marginTop: 10 }]}
               placeholder="House, road, area, city"

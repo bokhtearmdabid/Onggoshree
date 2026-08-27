@@ -13,6 +13,7 @@ import { colors, fonts } from "../constants/theme";
 import { useCart } from "../context/CartContext";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { useWishlist } from "../context/WishlistContext";
+import { getDiscountPercent } from "../utils/pricing";
 
 
 export default function ProductDetailScreen({ route, navigation }) {
@@ -22,6 +23,7 @@ export default function ProductDetailScreen({ route, navigation }) {
   const [qty, setQty] = useState(1);
   const { addToCart } = useCart();
   const { isWishlisted, toggle } = useWishlist();
+  const discountPercent = product ? getDiscountPercent(product) : null;
 
   useEffect(() => {
     getProductById(productId)
@@ -95,7 +97,17 @@ export default function ProductDetailScreen({ route, navigation }) {
             <Text style={styles.rate}>★ 4.9 · 308 reviews</Text>
           </View>
 
-          <Text style={styles.price}>৳{product.price.toFixed(0)}</Text>
+          <View style={{ flexDirection: "row", alignItems: "baseline", gap: 10 }}>
+            <Text style={styles.price}>৳{product.price.toFixed(0)}</Text>
+            {discountPercent && (
+              <>
+                <Text style={styles.compareAtDetail}>৳{product.compareAtPrice.toFixed(0)}</Text>
+                <View style={styles.discountPill}>
+                  <Text style={styles.discountPillText}>{discountPercent}% OFF</Text>
+                </View>
+              </>
+            )}
+          </View>
 
           <Text style={styles.desc}>{product.description}</Text>
 
@@ -277,4 +289,17 @@ const styles = StyleSheet.create({
   width: "100%",
   height: "100%",
   },
+  compareAtDetail: {
+  fontFamily: fonts.sans,
+  fontSize: 16,
+  color: colors.muted,
+  textDecorationLine: "line-through",
+  },
+  discountPill: {
+    backgroundColor: "#c0392b",
+    borderRadius: 20,
+    paddingVertical: 3,
+    paddingHorizontal: 10,
+  },
+  discountPillText: { fontFamily: fonts.sansBold, fontSize: 10.5, color: "#fff" },
 });

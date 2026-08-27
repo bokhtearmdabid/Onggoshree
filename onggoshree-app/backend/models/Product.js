@@ -16,6 +16,11 @@ const productSchema = new mongoose.Schema(
       required: [true, "Product price is required"],
       min: [0, "Price cannot be negative"],
     },
+    compareAtPrice: {
+      type: Number,
+      min: [0, "Compare-at price cannot be negative"],
+      default: null,
+    },
     category: {
       type: String,
       required: [true, "Product category is required"],
@@ -34,5 +39,12 @@ const productSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+productSchema.pre("save", function (next) {
+  if (this.compareAtPrice !== null && this.compareAtPrice <= this.price) {
+    return next(new Error("compareAtPrice must be greater than price for a discount to make sense"));
+  }
+  next();
+});
 
 module.exports = mongoose.model("Product", productSchema);

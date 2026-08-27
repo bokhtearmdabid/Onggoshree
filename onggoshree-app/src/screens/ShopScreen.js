@@ -14,6 +14,7 @@ import { getProducts } from "../api/api";
 import { colors, fonts } from "../constants/theme";
 import { useCart } from "../context/CartContext";
 import { Feather } from "@expo/vector-icons";
+import { getDiscountPercent } from "../utils/pricing";
 
 const CATEGORIES = ["All", "Facial", "Serum", "Gel", "Bar", "Hair"];
 
@@ -121,14 +122,24 @@ export default function ShopScreen({ navigation, route }) {
                   <Text style={styles.cardLetter}>{item.name.charAt(0).toUpperCase()}</Text>
                 )}
               </View>
+              {getDiscountPercent(item) && (
+                <View style={styles.discountBadge}>
+                  <Text style={styles.discountBadgeText}>{getDiscountPercent(item)}% OFF</Text>
+                </View>
+              )}
               <Text style={styles.cardCat}>{item.category?.toUpperCase()}</Text>
               <Text style={styles.cardName} numberOfLines={1}>{item.name}</Text>
               <View style={styles.cardRow}>
+              <View style={styles.priceRow}>
                 <Text style={styles.cardPrice}>৳{item.price.toFixed(0)}</Text>
-                <View style={styles.addBtn}>
-                  <Text style={styles.addIcon}>+</Text>
-                </View>
+                {getDiscountPercent(item) && (
+                  <Text style={styles.compareAt}>৳{item.compareAtPrice.toFixed(0)}</Text>
+                )}
               </View>
+              <View style={styles.addBtn}>
+                <Text style={styles.addIcon}>+</Text>
+              </View>
+            </View>
             </TouchableOpacity>
           )}
           ListEmptyComponent={
@@ -240,25 +251,35 @@ const styles = StyleSheet.create({
   borderColor: colors.line,
   justifyContent: "center",
   alignItems: "center",
-},
-cartIcon: { fontSize: 16 },
-badge: {
-  position: "absolute",
-  top: -2,
-  right: -2,
-  width: 16,
-  height: 16,
-  borderRadius: 8,
-  backgroundColor: colors.glow,
-  borderWidth: 2,
-  borderColor: colors.canvas,
-  justifyContent: "center",
-  alignItems: "center",
-},
-badgeText: { fontSize: 9, fontWeight: "800", color: "#40300f" },
-cardImagePhoto: {
-  width: "100%",
-  height: "100%",
-  borderRadius: 14,
-},
+  },
+  cartIcon: { fontSize: 16 },
+  badge: {
+    position: "absolute",
+    top: -2,
+    right: -2,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: colors.glow,
+    borderWidth: 2,
+    borderColor: colors.canvas,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  badgeText: { fontSize: 9, fontWeight: "800", color: "#40300f" },
+  cardImagePhoto: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 14,
+  },
+  discountBadge: {
+    position: "absolute",
+    top: 7,
+    left: 7,
+    backgroundColor: "#c0392b",
+    borderRadius: 8,
+    paddingVertical: 3,
+    paddingHorizontal: 7,
+  },
+  discountBadgeText: { fontFamily: fonts.sansBold, fontSize: 9, color: "#fff" },
 });

@@ -21,6 +21,7 @@ const addressSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      match: [/^01[3-9]\d{8}$/, "Please enter a valid phone number"],
     },
     isDefault: {
       type: Boolean,

@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import { createAddress, updateAddress } from "../api/api";
 import { colors, fonts } from "../constants/theme";
+import { isValidBDPhone } from "../utils/validation";
 
 const QUICK_LABELS = ["Home", "Work", "Other"];
 
@@ -19,6 +20,10 @@ export default function AddressFormScreen({ route, navigation }) {
   const handleSave = async () => {
     if (!label.trim() || !fullAddress.trim() || !phone.trim()) {
       Alert.alert("Missing details", "Please fill in a label, address, and phone number.");
+      return;
+    }
+    if (!isValidBDPhone(phone)) {
+      Alert.alert("Invalid phone number", "Please enter a valid 11-digit Bangladesh mobile number.");
       return;
     }
 
@@ -85,10 +90,14 @@ export default function AddressFormScreen({ route, navigation }) {
           style={styles.input}
           placeholder="01XXXXXXXXX"
           placeholderTextColor={colors.muted}
-          keyboardType="phone-pad"
+          keyboardType="number-pad"
+          maxLength={11}
           value={phone}
-          onChangeText={setPhone}
+          onChangeText={(text) => setPhone(text.replace(/[^0-9]/g, ""))}
         />
+        {phone.length > 0 && !isValidBDPhone(phone) && (
+          <Text style={styles.errorHint}>Enter a valid 11-digit BD number (e.g. 016XXXXXXXX)</Text>
+        )}
 
         <View style={styles.defaultRow}>
           <Text style={styles.defaultLabel}>Set as default address</Text>
@@ -168,4 +177,6 @@ const styles = StyleSheet.create({
   saveBtn: { backgroundColor: colors.forest, borderRadius: 14, paddingVertical: 15, alignItems: "center", marginTop: 24 },
   saveBtnDisabled: { opacity: 0.6 },
   saveBtnText: { fontFamily: fonts.sansBold, fontSize: 13.5, color: "#fff" },
+
+  errorHint: { fontFamily: fonts.sans, fontSize: 11, color: "#c0392b", marginTop: 6 },
 });

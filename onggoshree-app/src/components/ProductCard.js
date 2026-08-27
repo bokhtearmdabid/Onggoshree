@@ -3,9 +3,11 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { colors, fonts } from "../constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { useWishlist } from "../context/WishlistContext";
+import { getDiscountPercent } from "../utils/pricing";
 
 export default function ProductCard({ product, onPress }) {
   const { isWishlisted, toggle } = useWishlist();
+  const discountPercent = getDiscountPercent(product);
 
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.85}>
@@ -33,11 +35,23 @@ export default function ProductCard({ product, onPress }) {
       </View>
       <Text style={styles.name} numberOfLines={1}>{product.name}</Text>
       <View style={styles.row}>
-        <Text style={styles.price}>৳{product.price.toFixed(0)}</Text>
-        <View style={styles.addBtn}>
-          <Text style={styles.addIcon}>+</Text>
+      <View>
+        <View style={styles.priceRow}>
+          <Text style={styles.price}>৳{product.price.toFixed(0)}</Text>
+          {discountPercent && (
+            <Text style={styles.compareAt}>৳{product.compareAtPrice.toFixed(0)}</Text>
+          )}
         </View>
       </View>
+      <View style={styles.addBtn}>
+        <Text style={styles.addIcon}>+</Text>
+      </View>
+    </View>
+    {discountPercent && (
+      <View style={styles.discountBadge}>
+        <Text style={styles.discountBadgeText}>{discountPercent}% OFF</Text>
+      </View>
+    )}
     </TouchableOpacity>
   );
 }
@@ -112,4 +126,21 @@ const styles = StyleSheet.create({
   justifyContent: "center",
   alignItems: "center",
   },
+  priceRow: { flexDirection: "row", alignItems: "baseline", gap: 6 },
+  compareAt: {
+    fontFamily: fonts.sans,
+    fontSize: 11,
+    color: colors.muted,
+    textDecorationLine: "line-through",
+  },
+  discountBadge: {
+    position: "absolute",
+    top: 7,
+    left: 7,
+    backgroundColor: "#c0392b",
+    borderRadius: 8,
+    paddingVertical: 3,
+    paddingHorizontal: 7,
+  },
+  discountBadgeText: { fontFamily: fonts.sansBold, fontSize: 9, color: "#fff" },
 });
