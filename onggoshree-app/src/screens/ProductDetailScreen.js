@@ -16,6 +16,7 @@ import { useCart } from "../context/CartContext";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { useWishlist } from "../context/WishlistContext";
 import { getDiscountPercent } from "../utils/pricing";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
 
@@ -62,8 +63,9 @@ export default function ProductDetailScreen({ route, navigation }) {
     );
   }
 
+
   return (
-    <View style={styles.screen}>
+   <SafeAreaView style={styles.screen} edges={["top"]}>
       <ScrollView contentContainerStyle={{ paddingBottom: 110 }}>
         {/* Hero image area */}
         <View style={styles.hero}>
@@ -170,7 +172,7 @@ export default function ProductDetailScreen({ route, navigation }) {
           </Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

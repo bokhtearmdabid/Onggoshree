@@ -51,18 +51,19 @@ const products = [
     imageUrl: "https://onggoshree.onrender.com/images/products/chlorophyll-bar.jpg"
   },
   {
-    name: "Keshraj Hair Oil",
-    description:
-      "A traditional herbal hair oil that strengthens roots, reduces hair fall, and adds natural shine.",
-    price: 350,
-    compareAtPrice: 599,
-    category: "Hair",
-    stock: 45,
-    imageUrl: "https://onggoshree.onrender.com/images/products/keshraj-hair-oil.jpg",
-    images: [
+  name: "Keshraj Hair Oil",
+  description:
+    "A traditional herbal hair oil that strengthens roots, reduces hair fall, and adds natural shine.",
+  price: 350,
+  compareAtPrice: 599,
+  category: "Hair",
+  stock: 45,
+  imageUrl: "https://onggoshree.onrender.com/images/products/keshraj-hair-oil.jpg",
+  images: [
+    "https://onggoshree.onrender.com/images/products/keshraj-hair-oil.jpg",
     "https://onggoshree.onrender.com/images/products/keshraj-hair-oil-2.jpg",
     "https://onggoshree.onrender.com/images/products/keshraj-hair-oil-3.jpg",
-   ],
+    ],
   },
 ];
 
