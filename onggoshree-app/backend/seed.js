@@ -58,7 +58,11 @@ const products = [
     compareAtPrice: 599,
     category: "Hair",
     stock: 45,
-    imageUrl: "https://onggoshree.onrender.com/images/products/keshraj-hair-oil.jpg"
+    imageUrl: "https://onggoshree.onrender.com/images/products/keshraj-hair-oil.jpg",
+    images: [
+    "https://onggoshree.onrender.com/images/products/keshraj-hair-oil-2.jpg",
+    "https://onggoshree.onrender.com/images/products/keshraj-hair-oil-3.jpg",
+   ],
   },
 ];
 

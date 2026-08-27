@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Image,
+  FlatList,
+  Dimensions,
 } from "react-native";
 import { getProductById } from "../api/api";
 import { colors, fonts } from "../constants/theme";
@@ -15,14 +17,24 @@ import { Feather, Ionicons } from "@expo/vector-icons";
 import { useWishlist } from "../context/WishlistContext";
 import { getDiscountPercent } from "../utils/pricing";
 
+const { width } = Dimensions.get("window");
 
 export default function ProductDetailScreen({ route, navigation }) {
   const { productId } = route.params;
   const [product, setProduct] = useState(null);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [qty, setQty] = useState(1);
   const { addToCart } = useCart();
   const { isWishlisted, toggle } = useWishlist();
+
+  const galleryImages =
+    product?.images?.length > 0
+      ? product.images.slice(0, 5)
+      : product?.imageUrl
+      ? [product.imageUrl]
+      : [];
+
   const discountPercent = product ? getDiscountPercent(product) : null;
 
   useEffect(() => {
@@ -63,17 +75,6 @@ export default function ProductDetailScreen({ route, navigation }) {
               style={styles.iconBtn}
               onPress={() => toggle(product._id)}
             >
-              <Feather
-                name="heart"
-                size={18}
-                color={isWishlisted(product._id) ? "#c0392b" : colors.forest}
-                fill={isWishlisted(product._id) ? "#c0392b" : "none"}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.iconBtn}
-              onPress={() => toggle(product._id)}
-            >
               <Ionicons
                 name={isWishlisted(product._id) ? "heart" : "heart-outline"}
                 size={19}
@@ -81,11 +82,37 @@ export default function ProductDetailScreen({ route, navigation }) {
               />
             </TouchableOpacity>
           </View>
-          {product.imageUrl ? (
-              <Image source={{ uri: product.imageUrl }} style={styles.heroImage} resizeMode="cover" />
-            ) : (
-              <Text style={styles.heroLetter}>{product.name.charAt(0).toUpperCase()}</Text>
-            )}
+
+          {galleryImages.length > 0 ? (
+            <>
+              <FlatList
+                data={galleryImages}
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={false}
+                style={{ height: 290 }}
+                keyExtractor={(_, i) => String(i)}
+                onMomentumScrollEnd={(e) => {
+                  const index = Math.round(e.nativeEvent.contentOffset.x / width);
+                  setActiveImageIndex(index);
+                }}
+                renderItem={({ item }) => (
+                  <Image source={{ uri: item }} style={[styles.heroImage, { width }]} resizeMode="cover" />
+                )}
+              />
+              {galleryImages.length > 1 && (
+                <View style={styles.galleryDots}>
+                  {galleryImages.map((_, i) => (
+                    <View key={i} style={[styles.galleryDot, i === activeImageIndex && styles.galleryDotOn]} />
+                  ))}
+                </View>
+              )}
+            </>
+          ) : (
+            <Text style={styles.heroLetter}>
+              {product.name ? product.name.charAt(0).toUpperCase() : "?"}
+            </Text>
+          )}
         </View>
 
         {/* Details */}
@@ -98,15 +125,17 @@ export default function ProductDetailScreen({ route, navigation }) {
           </View>
 
           <View style={{ flexDirection: "row", alignItems: "baseline", gap: 10 }}>
-            <Text style={styles.price}>৳{product.price.toFixed(0)}</Text>
-            {discountPercent && (
+            <Text style={styles.price}>৳{Number(product.price).toFixed(0)}</Text>
+            {discountPercent ? (
               <>
-                <Text style={styles.compareAtDetail}>৳{product.compareAtPrice.toFixed(0)}</Text>
+                <Text style={styles.compareAtDetail}>
+                  ৳{Number(product.compareAtPrice).toFixed(0)}
+                </Text>
                 <View style={styles.discountPill}>
                   <Text style={styles.discountPillText}>{discountPercent}% OFF</Text>
                 </View>
               </>
-            )}
+            ) : null}
           </View>
 
           <Text style={styles.desc}>{product.description}</Text>
@@ -130,15 +159,15 @@ export default function ProductDetailScreen({ route, navigation }) {
           </TouchableOpacity>
         </View>
         <TouchableOpacity
-        style={styles.addBtn}
-        onPress={() => {
+          style={styles.addBtn}
+          onPress={() => {
             addToCart(product, qty);
             navigation.navigate("Cart");
-        }}
+          }}
         >
-        <Text style={styles.addBtnText}>
+          <Text style={styles.addBtnText}>
             Add to bag · <Text style={styles.addBtnPrice}>৳{(product.price * qty).toFixed(0)}</Text>
-        </Text>
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -286,14 +315,14 @@ const styles = StyleSheet.create({
     color: colors.glow,
   },
   heroImage: {
-  width: "100%",
-  height: "100%",
+    width: "100%",
+    height: "100%",
   },
   compareAtDetail: {
-  fontFamily: fonts.sans,
-  fontSize: 16,
-  color: colors.muted,
-  textDecorationLine: "line-through",
+    fontFamily: fonts.sans,
+    fontSize: 16,
+    color: colors.muted,
+    textDecorationLine: "line-through",
   },
   discountPill: {
     backgroundColor: "#c0392b",
@@ -302,4 +331,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   discountPillText: { fontFamily: fonts.sansBold, fontSize: 10.5, color: "#fff" },
+
+  galleryDots: {
+    position: "absolute",
+    bottom: 14,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 6,
+  },
+  galleryDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: "rgba(255,255,255,0.5)",
+  },
+  galleryDotOn: {
+    backgroundColor: "#fff",
+    width: 18,
+  },
 });
