@@ -57,4 +57,13 @@ export const deleteOrderAdmin = (id) => api.delete(`/admin/orders/${id}`);
 export const getMyWishlist = () => api.get("/wishlist/mine");
 export const toggleWishlist = (productId) => api.post("/wishlist/toggle", { productId });
 
+export const createProductAdmin = (data) => api.post("/products", data);
+export const updateProductAdmin = (id, data) => api.put(`/products/${id}`, data);
+export const deleteProductAdmin = (id) => api.delete(`/products/${id}`);
+
+export const uploadProductImage = (formData) =>
+  api.post("/products/upload-image", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+
 export default api;
