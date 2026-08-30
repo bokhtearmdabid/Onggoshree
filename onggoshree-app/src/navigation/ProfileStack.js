@@ -8,6 +8,8 @@ import AddressFormScreen from "../screens/AddressFormScreen";
 import AdminOrdersScreen from "../screens/AdminOrdersScreen";
 import WishlistScreen from "../screens/WishlistScreen";
 import ProductDetailScreen from "../screens/ProductDetailScreen";
+import AdminProductsScreen from "../screens/AdminProductsScreen";
+import AdminProductFormScreen from "../screens/AdminProductFormScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +24,8 @@ export default function ProfileStack() {
       <Stack.Screen name="AdminOrders" component={AdminOrdersScreen} />
       <Stack.Screen name="Wishlist" component={WishlistScreen} />
       <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
+      <Stack.Screen name="AdminProducts" component={AdminProductsScreen} />
+      <Stack.Screen name="AdminProductForm" component={AdminProductFormScreen} />
     </Stack.Navigator>
   );
 }
