@@ -92,6 +92,20 @@ export default function ProfileScreen({ navigation }) {
             ))}
 
             {user?.isAdmin && (
+              <TouchableOpacity
+                style={styles.mrow}
+                activeOpacity={0.6}
+                onPress={() => navigation.navigate("AdminOrders")}
+              >
+                <View style={[styles.mi, { backgroundColor: "rgba(231,179,107,0.2)" }]}>
+                  <Feather name="shield" size={16} color={colors.amber} />
+                </View>
+                <Text style={styles.ml}>Manage orders (Admin)</Text>
+                <Text style={styles.mc}>›</Text>
+              </TouchableOpacity>
+            )}
+
+            {user?.isAdmin && (
                 <TouchableOpacity
                   style={styles.mrow}
                   activeOpacity={0.6}

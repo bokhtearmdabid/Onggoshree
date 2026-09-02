@@ -6,6 +6,7 @@ import {
   StyleSheet,
   RefreshControl,
   TouchableOpacity,
+  Linking,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getProducts } from "../api/api";
@@ -17,6 +18,7 @@ import { useAuth } from "../context/AuthContext";
 import SkeletonCard from "../components/SkeletonCard";
 import { HOME_CATEGORIES } from "../constants/categories";
 import SocialFollowRow from "../components/SocialFollowRow";
+import { Ionicons } from "@expo/vector-icons";
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -66,6 +68,11 @@ export default function HomeScreen({ navigation }) {
 
   const goToShop = (category) => {
     navigation.navigate("Shop", { screen: "ShopMain", params: { category } });
+  };
+  const openWhatsApp = () => {
+  const phone = "8801628759989";
+  const message = "Hi Onggoshree! I have a question about your products.";
+  Linking.openURL(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`);
   };
 
   // Rendering the whole screen as ONE FlatList (products as the list data,
@@ -127,20 +134,22 @@ export default function HomeScreen({ navigation }) {
               <HeroCarousel onPressBanner={goToShop} />
             </View>
 
-            {/* Quick category chips */}
-            <FlatList
-              data={HOME_CATEGORIES}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              keyExtractor={(item) => item.name}
-              contentContainerStyle={{ paddingHorizontal: 18, gap: 10, marginBottom: 28 }}
-              renderItem={({ item }) => (
-                <TouchableOpacity style={styles.catChip} activeOpacity={0.8} onPress={() => goToShop(item.name)}>
-                  <Text style={styles.catIcon}>{item.icon}</Text>
+            {/* Category circles */}
+            <View style={styles.catRow}>
+              {HOME_CATEGORIES.map((item) => (
+                <TouchableOpacity
+                  key={item.name}
+                  style={styles.catItem}
+                  activeOpacity={0.75}
+                  onPress={() => goToShop(item.name)}
+                >
+                  <View style={[styles.catCircle, { backgroundColor: item.tint }]}>
+                    <Ionicons name={item.icon} size={24} color={colors.forest} />
+                  </View>
                   <Text style={styles.catLabel}>{item.name}</Text>
                 </TouchableOpacity>
-              )}
-            />
+              ))}
+            </View>
 
             {/* Watch & shop */}
             <View style={styles.sectionHeader}>
@@ -209,6 +218,9 @@ export default function HomeScreen({ navigation }) {
           ) : null
         }
       />
+      <TouchableOpacity style={styles.whatsappBtn} activeOpacity={0.85} onPress={openWhatsApp}>
+      <Ionicons name="logo-whatsapp" size={26} color="#fff" />
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -373,17 +385,51 @@ const styles = StyleSheet.create({
     color: colors.glowSoft,
     marginLeft: 8,
   },
-  catChip: {
+  catRow: {
     flexDirection: "row",
-    alignItems: "center",
-    gap: 7,
-    backgroundColor: colors.milk,
-    borderWidth: 1,
-    borderColor: colors.line,
-    borderRadius: 20,
-    paddingVertical: 9,
-    paddingHorizontal: 15,
+    justifyContent: "space-between",
+    paddingHorizontal: 18,
+    marginBottom: 28,
   },
-  catIcon: { fontSize: 14 },
-  catLabel: { fontFamily: fonts.sansBold, fontSize: 12.5, color: colors.forest },
+  catItem: {
+    alignItems: "center",
+    gap: 8,
+    width: 64,
+  },
+  catCircle: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.6)",
+    shadowColor: colors.forest,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  catLabel: {
+    fontFamily: fonts.sansBold,
+    fontSize: 11,
+    color: colors.forest,
+    textAlign: "center",
+  },
+  whatsappBtn: {
+  position: "absolute",
+  bottom: 24,
+  right: 20,
+  width: 54,
+  height: 54,
+  borderRadius: 27,
+  backgroundColor: "#25D366", // WhatsApp's real brand green
+  justifyContent: "center",
+  alignItems: "center",
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.25,
+  shadowRadius: 8,
+  elevation: 6,
+  },
 });
