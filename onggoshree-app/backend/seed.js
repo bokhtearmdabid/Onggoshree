@@ -65,6 +65,33 @@ const products = [
     "https://onggoshree.onrender.com/images/products/keshraj-hair-oil-3.jpg",
     ],
   },
+
+
+  //Merchandise
+  {
+  name: "Onggoshree Tote Bag",
+  description: "A sturdy canvas tote featuring our signature mark — perfect for carrying your daily essentials.",
+  price: 129,
+  category: "Merchandise",
+  stock: 60,
+  imageUrl: "https://onggoshree.onrender.com/images/products/merch-tote-bag.jpg",
+  },
+  {
+    name: "Glow Club Enamel Pin",
+    description: "A collectible enamel pin celebrating your Glow Club journey.",
+    price: 99,
+    category: "Merchandise",
+    stock: 100,
+    imageUrl: "https://onggoshree.onrender.com/images/products/merch-pin.jpg",
+  },
+  {
+    name: "Onggoshree Ceramic Mug",
+    description: "Start your skincare ritual mornings right with this hand-finished ceramic mug.",
+    price: 350,
+    category: "Merchandise",
+    stock: 40,
+    imageUrl: "https://onggoshree.onrender.com/images/products/merch-mug.jpg",
+  },
 ];
 
 const seedDatabase = async () => {

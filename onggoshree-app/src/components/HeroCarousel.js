@@ -37,11 +37,14 @@ export default function HeroCarousel({ onPressBanner }) {
             style={styles.image}
             imageStyle={{ borderRadius: 22 }}
           >
-            <View style={[styles.overlay, { backgroundColor: item.bg }]}>
-              <Text style={styles.title}>{item.title}</Text>
-              <Text style={styles.subtitle}>{item.subtitle}</Text>
-              <View style={styles.cta}>
-                <Text style={styles.ctaText}>Shop now</Text>
+            <View style={styles.overlay}>
+              <View style={[styles.tintLayer, { backgroundColor: item.bg }]} />
+              <View style={styles.content}>
+                <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.subtitle}>{item.subtitle}</Text>
+                <View style={styles.cta}>
+                  <Text style={styles.ctaText}>Shop now</Text>
+                </View>
               </View>
             </View>
           </ImageBackground>
@@ -88,6 +91,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: "center",
-    opacity: 0.55, // lets the photo show through while keeping text readable
+    opacity: 0.95, // lets the photo show through while keeping text readable
   },
 });
