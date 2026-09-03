@@ -16,7 +16,7 @@ import { useCart } from "../context/CartContext";
 import { Feather } from "@expo/vector-icons";
 import { getDiscountPercent } from "../utils/pricing";
 
-const CATEGORIES = ["All", "Facial", "Serum", "Gel", "Bar", "Hair"];
+const CATEGORIES = ["All", "Facial", "Serum", "Gel", "Bar", "Hair" , "Merchandise"];
 
 export default function ShopScreen({ navigation, route }) {
   const [products, setProducts] = useState([]);

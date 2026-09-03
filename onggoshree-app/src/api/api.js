@@ -64,6 +64,8 @@ export const deleteProductAdmin = (id) => api.delete(`/products/${id}`);
 export const uploadProductImage = (formData) =>
   api.post("/products/upload-image", formData, {
     headers: { "Content-Type": "multipart/form-data" },
-  });
+});
+
+export const getMerchandise = () => api.get("/products", { params: { category: "Merchandise" } });  
 
 export default api;

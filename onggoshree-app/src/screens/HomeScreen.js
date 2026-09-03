@@ -19,6 +19,7 @@ import SkeletonCard from "../components/SkeletonCard";
 import { HOME_CATEGORIES } from "../constants/categories";
 import SocialFollowRow from "../components/SocialFollowRow";
 import { Ionicons } from "@expo/vector-icons";
+import { getMerchandise } from "../api/api";
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -36,6 +37,7 @@ const TIER_RING_COLORS = {
 
 export default function HomeScreen({ navigation }) {
   const [products, setProducts] = useState([]);
+  const [merchandise, setMerchandise] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -43,7 +45,7 @@ export default function HomeScreen({ navigation }) {
   const firstName = user?.name?.split(" ")[0] || "there";
   const tierRingColor = TIER_RING_COLORS[user?.tier] || colors.leaf;
 
-  const fetchProducts = useCallback(() => {
+  const fetchProducts = () => {
     getProducts()
       .then((response) => setProducts(response.data))
       .catch((err) => {
@@ -54,7 +56,11 @@ export default function HomeScreen({ navigation }) {
         setLoading(false);
         setRefreshing(false);
       });
-  }, []);
+
+    getMerchandise()
+      .then((res) => setMerchandise(res.data))
+      .catch((err) => console.log("Error fetching merchandise:", err.message));
+  };
 
   useEffect(() => {
     fetchProducts();
@@ -211,6 +217,34 @@ export default function HomeScreen({ navigation }) {
                 <Text style={styles.viewAllText}>View all products</Text>
                 <Text style={styles.viewAllArrow}>→</Text>
               </TouchableOpacity>
+
+              {merchandise.length > 0 && (
+                <View style={{ marginTop: 30 }}>
+                  <View style={styles.sectionHeader}>
+                    <View style={styles.sectionTitleWrap}>
+                      <View style={styles.sectionAccent} />
+                      <Text style={styles.sectionTitle}>Merchandise</Text>
+                    </View>
+                    <TouchableOpacity onPress={() => goToShop("Merchandise")} activeOpacity={0.7}>
+                      <Text style={styles.seeAll}>See all</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <FlatList
+                    data={merchandise}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    keyExtractor={(item) => item._id}
+                    contentContainerStyle={{ paddingHorizontal: 18 }}
+                    renderItem={({ item }) => (
+                      <ProductCard
+                        product={item}
+                        onPress={() => navigation.navigate("ProductDetail", { productId: item._id })}
+                      />
+                    )}
+                  />
+                </View>
+              )}
+
               <View style={{ paddingHorizontal: 18, marginTop: 24 }}>
                 <SocialFollowRow />
               </View>
