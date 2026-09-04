@@ -25,7 +25,19 @@ const userSchema = new mongoose.Schema(
     googleId: {
       type: String,
       unique: true,
-      sparse: true, 
+      sparse: true,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    otpHash: {
+      type: String,
+      select: false, // never included in normal queries unless explicitly requested
+    },
+    otpExpires: {
+      type: Date,
+      select: false,
     },
     points: {
       type: Number,

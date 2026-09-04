@@ -106,4 +106,21 @@ const adminNewOrderEmail = (order) => ({
   `,
 });
 
-module.exports = { welcomeEmail, orderConfirmationEmail, adminNewOrderEmail };
+const otpEmail = (name, otp) => ({
+  subject: `Your Onggoshree verification code: ${otp}`,
+  html: `
+    <div style="font-family: 'Noto Sans Bengali', sans-serif; max-width: 480px; margin: auto; background: #FFFFFF; border-radius: 16px; overflow: hidden; border: 1px solid #EAEFEB;">
+      <div style="background: linear-gradient(135deg, #16352A 0%, #1F4A3A 100%); padding: 36px 32px 28px;">
+        <h1 style="margin: 0; color: #FFFFFF; font-size: 20px; font-weight: 600;">Verify your email</h1>
+        <p style="margin: 8px 0 0; color: #B8C7BE; font-size: 14px;">Hi ${name}, one quick step left</p>
+      </div>
+      <div style="padding: 32px; text-align: center;">
+        <p style="margin: 0 0 20px; color: #17251E; font-size: 14px;">Enter this code in the app to verify your account:</p>
+        <div style="font-size: 36px; font-weight: 700; letter-spacing: 8px; color: #16352A; margin: 0 0 20px;">${otp}</div>
+        <p style="margin: 0; color: #6E7D72; font-size: 12.5px;">This code expires in 10 minutes.</p>
+      </div>
+    </div>
+  `,
+});
+
+module.exports = { welcomeEmail, orderConfirmationEmail, adminNewOrderEmail, otpEmail };
