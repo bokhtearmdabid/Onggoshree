@@ -48,11 +48,10 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-productSchema.pre("save", function (next) {
+productSchema.pre("save", function () {
   if (this.compareAtPrice !== null && this.compareAtPrice <= this.price) {
-    return next(new Error("compareAtPrice must be greater than price for a discount to make sense"));
+    throw new Error("compareAtPrice must be greater than price for a discount to make sense");
   }
-  next();
 });
 
 module.exports = mongoose.model("Product", productSchema);
