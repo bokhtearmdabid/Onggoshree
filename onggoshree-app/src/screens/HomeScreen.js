@@ -89,7 +89,7 @@ export default function HomeScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <FlatList
-        data={products.slice(0, 4)}
+        data={products.filter((p) => p.category !== "Merchandise").slice(0, 4)}
         keyExtractor={(item) => item._id}
         numColumns={2}
         columnWrapperStyle={{ gap: 13, paddingHorizontal: 18, marginBottom: 16 }}
