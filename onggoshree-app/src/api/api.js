@@ -68,4 +68,7 @@ export const uploadProductImage = (formData) =>
 
 export const getMerchandise = () => api.get("/products", { params: { category: "Merchandise" } });  
 
+export const verifyOTP = (email, otp) => api.post("/auth/verify-otp", { email, otp });
+export const resendOTP = (email) => api.post("/auth/resend-otp", { email });
+
 export default api;

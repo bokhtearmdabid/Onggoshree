@@ -65,6 +65,7 @@ export default function SignupScreen({ navigation }) {
     setSubmitting(true);
     try {
       await register(name.trim(), email.trim(), password);
+      navigation.navigate("OTPVerification", { email: email.trim() });
     } catch (err) {
       const serverMessage = err.response?.data?.message;
       setError(serverMessage || "Something went wrong. Please try again.");

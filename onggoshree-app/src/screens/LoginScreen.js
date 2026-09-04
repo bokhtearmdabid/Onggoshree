@@ -63,9 +63,11 @@ export default function LoginScreen({ navigation }) {
     setSubmitting(true);
     try {
       await login(email.trim(), password);
-      // No manual navigation needed — App.js watches the logged-in state
-      // and automatically swaps to the main app once `user` is set.
     } catch (err) {
+      if (err.response?.data?.needsVerification) {
+        navigation.navigate("OTPVerification", { email: email.trim() });
+        return;
+      }
       const serverMessage = err.response?.data?.message;
       setError(serverMessage || "Something went wrong. Please try again.");
     } finally {

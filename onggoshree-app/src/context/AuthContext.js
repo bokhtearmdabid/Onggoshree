@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
 import { registerUser, loginUser, getMe } from "../api/api";
 import { googleLoginRequest } from "../api/api";
+import { verifyOTP as verifyOTPApi } from "../api/api";
 
 const AuthContext = createContext(null);
 
@@ -30,11 +31,16 @@ export function AuthProvider({ children }) {
   }, []);
 
   const register = async (name, email, password) => {
-    const response = await registerUser({ name, email, password });
-    const { token, ...userData } = response.data;
-    await SecureStore.setItemAsync("authToken", token);
-    setUser(userData);
+  await registerUser({ name, email, password });
+  // Token check - No token yet — the account isn't usable until OTP verification completes
   };
+
+  const completeVerification = async (email, otp) => {
+  const response = await verifyOTPApi(email, otp);
+  const { token, ...userData } = response.data;
+  await SecureStore.setItemAsync("authToken", token);
+  setUser(userData);
+};
 
   const continueAsGuest = () => {
   setIsGuest(true);
@@ -74,7 +80,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, isGuest, register, login, loginWithGoogle, logout, refreshUser, continueAsGuest, exitGuestMode }}>
+    <AuthContext.Provider value={{ user, loading, isGuest, register, login, loginWithGoogle, logout, refreshUser, continueAsGuest, exitGuestMode, completeVerification }}>
       {children}
     </AuthContext.Provider>
   );
